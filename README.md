@@ -73,7 +73,7 @@ Both [SuperWoW](https://github.com/balakethelock/SuperWoW) and [Nampower](https:
     ```
     ```lua
     #showtooltip
-    /cast [stance:1/3, nocooldown:Mocking_Blow, notargeting:player] Mocking Blow
+    /cast [stance:1/3, nocooldown:"Mocking Blow", notargeting:player] Mocking Blow
     /cast [stance:2/3, nocooldown:Taunt, notargeting:player] Taunt
     /cast Shield Slam
     ```
@@ -82,7 +82,7 @@ Both [SuperWoW](https://github.com/balakethelock/SuperWoW) and [Nampower](https:
 
     ```
     #showtooltip
-    /cast [zone:Ahn'Qiraj] Yellow Qiraji Battle Tank;[nozone:Orgrimmar/Undercity/Thunder_Bluff nomybuff:Water_Walking] Red Goblin Shredder;Plainsrunning
+    /cast [zone:Ahn'Qiraj] Yellow Qiraji Battle Tank;[nozone:Orgrimmar/Undercity/"Thunder Bluff" nomybuff:"Water Walking"] Red Goblin Shredder;Plainsrunning
     ```
     Is the same as
     ```
@@ -194,25 +194,25 @@ Both [SuperWoW](https://github.com/balakethelock/SuperWoW) and [Nampower](https:
 ### Player Only
 | Conditional    | Syntax        | Multi | Noable | Tests For |
 |----------------|---------------|  :-:  | :-:    |-----------|
-| cdgcd          | [cdgcd:"Spell or Item Name"]<br/>[cdgcd:Spell_Or_Item_Name>X]<br/>[cdgcd:Spell_Or_Item_Name<X] | * | * | If the Spell or Item is on cooldown and optionally if the amount of time left is >= or <= than X seconds.  **GCD NOT IGNORED** |
+| cdgcd          | [cdgcd:"Spell or Item Name"]<br/>[cdgcd:"Spell or Item Name">X]<br/>[cdgcd:"Spell or Item Name"<X] | * | * | If the Spell or Item is on cooldown and optionally if the amount of time left is >= or <= than X seconds.  **GCD NOT IGNORED** |
 | checkchanneled | [checkchanneled:Spell/Attack/Shoot] |  |  | If the player is channeling the given spell, is auto attacking, auto shooting or wanding. |
 | channeled      | [channeled] |  |  | If the player is currently channeling a spell. |
 | combat         | [combat] |  | * | If the player is in combat. |
 | combo          | [combo:>#3]<br/>[combo:#2]</br>[combo:<#5] |   |  * |  If the player has the specified number of combo points. |
-| cooldown       | [cooldown:"Spell Or Item Name"]<br/>[cooldown:Spell_Or_Item_Name>X]<br/>[cooldown:Spell_Or_Item_Name<X] | * | * | If the Spell or Item is on cooldown and optionally if the amount of time left is >= or <= than X seconds. **GCD (if exatly 1.5 sec) IGNORED** |
-| equipped       | [equipped:Item_Name]<br/>[equipped:Shields]<br/>[equipped:Daggers2] | * | * | If the player has an item or item type equipped.  See below for a list of valid Weapon Types. |
+| cooldown       | [cooldown:"Spell Or Item Name"]<br/>[cooldown:"Spell or Item Name">X]<br/>[cooldown:"Spell or Item Name"<X] | * | * | If the Spell or Item is on cooldown and optionally if the amount of time left is >= or <= than X seconds. **GCD (if exatly 1.5 sec) IGNORED** |
+| equipped       | [equipped:"Item Name"]<br/>[equipped:Shields]<br/>[equipped:Daggers2] | * | * | If the player has an item or item type equipped.  See below for a list of valid Weapon Types. |
 | form           | [form:0/1/2/3/4/5] | * |  | Alias of stance |
 | group          | [group]<br/>[group:party/raid] | * | * | If the player is in a group. |
 | known          | [known:"Spell"]</br>[known:"Talent>#2"] | * | * | If the player knows a spell or talent.  Can optionally check the rank. |
-| mybuff         | [mybuff:"Buff Name"]<br/>[mybuff:Buff_Name>#X]<br/>[mybuff:Buff_Name<#X] | * |  | If the player has a buff of the given name and optionally if it has >= or <= X number of stacks. |
-| mydebuff       | [mydebuff:Debuff_Name]<br/>[mydebuff:"Debuff Name">#X]<br/>[mydebuff:Debuff_Name>=#X] | * |  | If the player has a debuff of the given name and optionally if it has >= or <= than X number of stacks. |
+| mybuff         | [mybuff:"Buff Name"]<br/>[mybuff:"Buff Name">#X]<br/>[mybuff:"Buff Name"<#X] | * |  | If the player has a buff of the given name and optionally if it has >= or <= X number of stacks. |
+| mydebuff       | [mydebuff:"Debuff Name"]<br/>[mydebuff:"Debuff Name">#X]<br/>[mydebuff:"Debuff Name">=#X] | * |  | If the player has a debuff of the given name and optionally if it has >= or <= than X number of stacks. |
 | myhp           | [myhp:<=X]<br/>[myhp:~=Y] |  |  | If the player health is >= or <= than Y percent. |
 | mypower        | [mypower:=X]<br/>[mypower:>=Y] |  |  | If the player has power (mana/rage/energy) >= or <= than Y percent. |
 | myrawpower     | [myrawpower:>X]<br/>[myrawpower:<=X] |  |  | If the player has power (mana/rage/energy) >= or <= than Y. |
 | reactive       | [reactive:"Spell Name"] | * |  | If the player has a reactive ability (Revenge, Overpower, Riposte, etc.) available to use.<br/><br/>**NOTE: Currently requires the reactive ability to be somewhere on your actionbars in addition to any macros you're using it in.** |
 | stance         | [stance:0/1/2/3/4/5] | * |  | If the player is in stance #.<br/>Supports Shadow Form as stance 1.|
 | stealth        | [stealth] |  | * | If the player is in Stealth. |
-| zone           | [zone:Zone_Name/"Zone Name"] | * | * | If the player is in one or more zones of the given name. |
+| zone           | [zone:"Zone Name"/"Other Zone Name"] | * | * | If the player is in one or more zones of the given name. |
 
 
 ### Unit Based
@@ -220,10 +220,10 @@ Both [SuperWoW](https://github.com/balakethelock/SuperWoW) and [Nampower](https:
 | Conditional    | Syntax        | Multi | Noable | Tests For |
 |----------------|---------------|  :-:  | :-:    |-----------|
 | alive          | [alive]       |       |        | If the @unitid is NOT dead or a ghost. |
-| buff           | [buff:Buff_Name]<br/>[buff:Buff_Name>#X]<br/>[buff:Buff_Name<#X] |  | * | If the @unitid has a buff of the given name and optionally if it has >= or <= than X number of stacks. |
-| casting        | [casting]<br/>[casting:Spell_Name] | * |  * |  If the @unitid is casting any or one or more specific spells. |
+| buff           | [buff:"Buff Name"]<br/>[buff:"Buff Name">#X]<br/>[buff:"Buff Name"<#X] |  | * | If the @unitid has a buff of the given name and optionally if it has >= or <= than X number of stacks. |
+| casting        | [casting]<br/>[casting:"Spell Name"] | * |  * |  If the @unitid is casting any or one or more specific spells. |
 | dead           | [dead]        |       |        | If the @unitid is dead or a ghost. |
-| debuff         | [debuff:Debuff_Name]<br/>[debuff:Debuff_Name>#X]<br/>[debuff:Debuff_Name<#X] |  | * | If the @unitid has a debuff of the given name and optionally if it has >= or <= than X number of stacks. |
+| debuff         | [debuff:"Debuff Name"]<br/>[debuff:"Debuff Name">#X]<br/>[debuff:"Debuff Name"<#X] |  | * | If the @unitid has a debuff of the given name and optionally if it has >= or <= than X number of stacks. |
 | harm           | [harm]        |       |        | If the @unitid is an enemy. |
 | help           | [help]        |       |        | If the @unitid is friendly. |
 | inrange        | [inrange]<br/>[inrange:"Spell Name"] | * | * | If the specified @unitid is in range of the spell. |
@@ -233,7 +233,7 @@ Both [SuperWoW](https://github.com/balakethelock/SuperWoW) and [Nampower](https:
 | power          | [power>X]<br/>[power<Y] |  |  | If the @unitid has power (mana/rage/energy) >= or <= than Y percent. |
 | rawpower       | [rawpower>X]<br/>[rawpower<X] |  |  | If the @unitid has power (mana/rage/energy) >= or <= than Y. |
 | hp             | [hp>X]<br/>[hp<Y] |  |  | If the @unitid health is >= or <= than Y percent. |
-| type           | [type:Creature_Type] | * | * | If the @unitid is the specified creature type.  See below for a list of valid Creature Types. |
+| type           | [type:"Creature Type"] | * | * | If the @unitid is the specified creature type.  See below for a list of valid Creature Types. |
 | targeting      | [targeting:unitid] | * | * | If the @unitid is targeting the specified unitid.<br/>See this [article](https://wowpedia.fandom.com/wiki/UnitId) for a list of unitids.<br/>Not all units are valid in vanilla. |
 | isplayer       | [isplayer:unitid] | * |  | If the unitid is a player.<br/>See this [article](https://wowpedia.fandom.com/wiki/UnitId) for a list of unitids.<br/>Not all units are valid in vanilla. |
 | isnpc          | [isnpc:unitid] | * |  | If the unitid is an npc.<br/>See this [article](https://wowpedia.fandom.com/wiki/UnitId) for a list of unitids.<br/>Not all units are valid in vanilla. |
