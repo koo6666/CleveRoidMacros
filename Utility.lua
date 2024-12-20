@@ -170,8 +170,8 @@ CleveRoids.kmods = {
     ctrl  = IsControlKeyDown,
     alt   = IsAltKeyDown,
     shift = IsShiftKeyDown,
-    mod   = function() return (CleveRoids.kmods.ctrl() or CleveRoids.kmods.alt() or CleveRoids.kmods.shift()) end,
-    nomod = function() return (not CleveRoids.kmods.ctrl() and not CleveRoids.kmods.alt() and not CleveRoids.kmods.shift()) end,
+    mod   = function() return (IsControlKeyDown() or IsAltKeyDown() or IsShiftKeyDown()) end,
+    nomod = function() return (not IsControlKeyDown() and not IsAltKeyDown() and not IsShiftKeyDown()) end,
 }
 
 CleveRoids.operators = {

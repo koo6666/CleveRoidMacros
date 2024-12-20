@@ -287,6 +287,41 @@ Both [SuperWoW](https://github.com/balakethelock/SuperWoW) and [Nampower](https:
 | Arcane Surge  |
 
 
+# Compatibility
+Compatibility should be the same as the original CleverMacro and Roid-Macros however I have not fully tested that.  
+
+
+### UnitFrames
+* agUnitFrames
+* Blizzard's UnitFrames
+* CT_RaidAssist
+* CT_UnitFrames
+* DiscordUnitFrames
+* FocusFrame
+* Grid
+* LunaUnitFrames
+* NotGrid
+* PerfectRaid
+* pfUI
+* sRaidFrames
+* UnitFramesImproved_Vanilla
+* XPerl
+
+
+### Action Bars
+* Blizzard's Action Bars
+* Bongos
+* Discord Action Bars
+* pfUI
+
+
+### Supported Addons
+* ClassicFocus / FocusFrame
+* SuperMacro
+* ShaguTweaks
+
+
+
 ----
 License
 ----

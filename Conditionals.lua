@@ -45,10 +45,13 @@ function CleveRoids.CheckHelp(target, help)
     target = CleveRoids.FixEmptyTarget(target)
 
     if help then
-        return UnitCanAssist("player", target)
-    else
-        return UnitCanAttack("player", target)
-	end
+        if help then
+            return UnitCanAssist("player", target)
+        else
+            return UnitCanAttack("player", target)
+        end
+    end
+
 	return true
 end
 
@@ -60,7 +63,7 @@ function CleveRoids.IsValidTarget(target, help)
     target = CleveRoids.FixEmptyTarget(target)
 
     if target ~= "mouseover" then
-		if not CleveRoids.CheckHelp(target, help) or not UnitExists(target) then
+        if not CleveRoids.CheckHelp(target, help) or not UnitExists(target) then
 			return false
 		end
 		return true
@@ -345,7 +348,6 @@ function CleveRoids.ValidateAura(unit, args, isbuff)
     while true do
         if isPlayer then
             _, stacks, spellID, remaining = CleveRoids.GetPlayerAura(i, isbuff)
-
         else
             if isbuff then
                 _, stacks, spellID = UnitBuff(unit, i)
@@ -521,20 +523,18 @@ CleveRoids.Keywords = {
     end,
 
     mod = function(conditionals)
-        --CLEANUP
-        -- if type(conditionals.mod) ~= "table" then
-        --     return CleveRoids.kmods.mod()
-        -- end
+        if type(conditionals.mod) ~= "table" then
+            return CleveRoids.kmods.mod()
+        end
         return Or(conditionals.mod, function(mod)
             return CleveRoids.kmods[mod]()
         end)
     end,
 
     nomod = function(conditionals)
-        --CLEANUP
-        -- if type(conditionals.nomod) ~= "table" then
-        --     return CleveRoids.kmods.nomod()
-        -- end
+        if type(conditionals.nomod) ~= "table" then
+            return CleveRoids.kmods.nomod()
+        end
         return And(conditionals.nomod, function(mod)
             return not CleveRoids.kmods[mod]()
         end)

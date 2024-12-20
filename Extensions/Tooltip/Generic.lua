@@ -159,7 +159,7 @@ function CleveRoids.IndexActionSlot(slot)
     else
         local actionType, _, name, rank = CleveRoids.GetActionButtonInfo(slot)
         if name then
-            local reactiveName = CleveRoids.reactiveSpells[name]
+            local reactiveName = CleveRoids.reactiveSpells[name] and name
             local actionSlotName = name..(rank and ("("..rank..")") or "")
 
             if reactiveName then

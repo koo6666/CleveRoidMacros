@@ -462,16 +462,19 @@ function CleveRoids.ParseMsg(msg)
                 local conditionGroup = CleveRoids.splitStringIgnoringQuotes(conditionGroups, ":")
                 local condition, args = conditionGroup[1], conditionGroup[2]
 
-                if not conditionals[condition] then
-                    conditionals[condition] = {}
-                elseif conditionals[condition] and type(conditionals) ~= "table" then
-                    conditionals[condition] = { conditionals[condition] }
-                end
-
                 -- No args, just set the conditional
                 if not args or args == "" then
-                    table.insert(conditionals[condition], action)
+                    if conditionals[condition] and type(conditionals) ~= "table" then
+                        conditionals[condition] = { conditionals[condition] }
+                        table.insert(conditionals[condition], action)
+                    else
+                        conditionals[condition] = conditionals.action
+                    end
                 else
+                    if not conditionals[condition] then
+                        conditionals[condition] = {}
+                    end
+
                     -- Split the args by / for multiple values
                     for _, arg in CleveRoids.splitString(args, "/") do
                         -- Remove quotes around conditional args
@@ -615,7 +618,7 @@ function CleveRoids.DoWithConditionals(msg, hook, fixEmptyTargetFunc, targetBefo
 
     if conditionals.target == "mouseover" then
         if not UnitExists("mouseover") then
-            conditionals.target = CleveRoids.mouseoverUnit
+            conditionals.target = CleveRoids.mouseoverUnit or "mouseover"
         end
         if not conditionals.target or (conditionals.target ~= "focus" and not UnitExists(conditionals.target)) then
             return false
