@@ -5,6 +5,22 @@ Both [SuperWoW](https://github.com/balakethelock/SuperWoW) and [Nampower](https:
 
 ---
 
+## Installation
+### Manual
+1. Download a zip from the green Code button or by clicking [here](https://github.com/bhhandley/CleveRoidMacros/archive/refs/heads/main.zip)
+2. Unzip the file and place the folder into your `Interface/Addons` folder.
+3. Rename the `CleveRoidMacros-main` folder to `CleveRoidMacros`
+4. Check that it is enabled in your addon list in-game.  
+5. Make sure you don't have other macro addons that may interfere.  SuperMacro should be compatible.
+
+### Turtle WoW Launcher / GitAddonsManager
+1. Open either application
+2. Click the Add button
+3. Paste the url `https://github.com/bhhandley/CleveRoidMacros`
+4. Download and keep up to date
+
+--- 
+
 ## Known Issues
 * Medium: Because this addon is constantly checking conditions for all macros on your actionbars, if you improperly create a macro, in some certain cases it can cause strange UI issues including not displaying any icons, other macros not working or lua errors.  Fix the macro or remove it from your actionbar and it should go back to normal automatically.  Depending on the cause, you may need to reload your UI (/rl).  If you find one of these and can reproduce the issue, let me know.
 * Minor: There may be an odd interaction with [SuperWoW](https://github.com/balakethelock/SuperWoW) and/or [Nampower](https://github.com/pepopo978/nampower) and randomly seeing "Unknown Unit" on the screen -- still trying to work out the root cause.  
