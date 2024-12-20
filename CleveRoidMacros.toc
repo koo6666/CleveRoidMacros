@@ -4,6 +4,7 @@
 ## Notes: Vanilla macros on ste|cFFFF0000roids|r!
 ## Title-deDE: |cFF4477FFCleveR|r|cFFFFFFFFoid - Weird|r|cFF4477FFer|r|cFFFFFFFF Vibes|r
 ## Notes-deDE: Vanilla Macros auf Ste|cFFFF0000roide|r!
+## Version: 1.01
 ## OptionalDeps: ClassicFocus, FocusFrame, pfUI, SuperMacro, Bongos_ActionBar
 Widgets.xml
 Localization.lua
