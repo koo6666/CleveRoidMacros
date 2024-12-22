@@ -21,6 +21,11 @@ function CleveRoids.GetSpellCost(spellSlot, bookType)
     return (cost and tonumber(cost) or 0), (reagent and tostring(reagent) or nil)
 end
 
+function CleveRoids.GetProxyActionSlot(slot)
+    if not slot then return end
+    return CleveRoids.actionSlots[slot] or CleveRoids.actionSlots[slot.."()"]
+end
+
 function CleveRoids.TestForActiveAction(actions)
     if not actions then return end
 
@@ -982,18 +987,23 @@ function IsCurrentAction(slot)
             name = active.item.name
         end
 
-        return CleveRoids.base.IsCurrentAction(CleveRoids.actionSlots[name] or slot)
+        return CleveRoids.base.IsCurrentAction(CleveRoids.GetProxyActionSlot(name) or slot)
     end
 end
 
 CleveRoids.base.GetActionTexture = GetActionTexture
 function GetActionTexture(slot)
     local actions = CleveRoids.GetAction(slot)
+
     if actions and (actions.active or actions.tooltip) then
-        return (actions.active and actions.active.texture) or (actions.tooltip and actions.tooltip.texture) or CleveRoids.unknownTexture
-    else
-        return CleveRoids.base.GetActionTexture(slot)
+        local proxySlot = (actions.active and actions.active.spell) and CleveRoids.GetProxyActionSlot(actions.active.spell.name)
+        if proxySlot and CleveRoids.base.GetActionTexture(proxySlot) ~= actions.active.spell.texture then
+            return CleveRoids.base.GetActionTexture(proxySlot)
+        else
+            return (actions.active and actions.active.texture) or (actions.tooltip and actions.tooltip.texture) or CleveRoids.unknownTexture
+        end
     end
+    return CleveRoids.base.GetActionTexture(slot)
 end
 
 -- TODO: Look into https://github.com/Stanzilla/WoWUIBugs/issues/47 if needed
