@@ -1,9 +1,9 @@
 ## Interface: 11200
 ## Author: DWG, brian, Mewtiny
 ## Title: |cFF4477FFCleveR|r|cFFFFFFFFoid - Weird|r|cFF4477FFer|r|cFFFFFFFF Vibes|r
-## Notes: Vanilla macros on ste|cFFFF0000roids|r!
+## Notes: Vanilla macros on steroids!
 ## Title-deDE: |cFF4477FFCleveR|r|cFFFFFFFFoid - Weird|r|cFF4477FFer|r|cFFFFFFFF Vibes|r
-## Notes-deDE: Vanilla Macros auf Ste|cFFFF0000roide|r!
+## Notes-deDE: Vanilla Macros auf Steroide!
 ## Version: 1.02
 ## OptionalDeps: ClassicFocus, FocusFrame, pfUI, SuperMacro, Bongos_ActionBar
 Widgets.xml
