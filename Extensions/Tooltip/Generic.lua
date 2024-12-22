@@ -125,6 +125,7 @@ function CleveRoids.IndexItems()
                         texture = texture,
                         link = link,
                     }
+                    items[itemID] = name
                 else
                     items[name].inventoryID = inventoryID
                     items[name].count = (items[name].count or 0) + (count or 0)
@@ -210,12 +211,12 @@ function CleveRoids.GetTalent(text)
 end
 
 function CleveRoids.GetItem(text)
-    local item = CleveRoids.Items[text]
+    local item = CleveRoids.Items[text] or CleveRoids.Items[tostring(text)]
 
     if item then
         -- Items are stored as [name]->{item} and [id]->name
         if type(item) == "table" then return item end
-        return CleveRoids.Items[item]
+        return CleveRoids.Items[tostring(item)]
     else
         local name, link, _, _, itemType, _, _, _, texture = GetItemInfo(text)
         if not name then
