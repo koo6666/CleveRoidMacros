@@ -885,7 +885,7 @@ function CleveRoids.OnUpdate(self)
 
     local time = GetTime()
     -- Slow down a bit.
-    if (time - CleveRoids.lastUpdate) < 0.15 then return end
+    if (time - CleveRoids.lastUpdate) < 0.1 then return end
     CleveRoids.lastUpdate = time
 
     if CleveRoids.CurrentSpell.autoAttackLock and (time - CleveRoids.autoAttackLockElapsed) > 0.2 then
