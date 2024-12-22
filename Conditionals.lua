@@ -553,11 +553,17 @@ CleveRoids.Keywords = {
     end,
 
     stealth = function(conditionals)
-        return CleveRoids.ValidatePlayerBuff(CleveRoids.Localized.Spells["Stealth"])
+        return (
+            (CleveRoids.playerClass == "ROGUE" and CleveRoids.ValidatePlayerBuff(CleveRoids.Localized.Spells["Stealth"]))
+            or (CleveRoids.playerClass == "DRUID" and CleveRoids.ValidatePlayerBuff(CleveRoids.Localized.Spells["Prowl"]))
+        )
     end,
 
     nostealth = function(conditionals)
-        return not CleveRoids.ValidatePlayerBuff(CleveRoids.Localized.Spells["Stealth"])
+        return (
+            (CleveRoids.playerClass == "ROGUE" and not CleveRoids.ValidatePlayerBuff(CleveRoids.Localized.Spells["Stealth"]))
+            or (CleveRoids.playerClass == "DRUID" and not CleveRoids.ValidatePlayerBuff(CleveRoids.Localized.Spells["Prowl"]))
+        )
     end,
 
     casting = function(conditionals)

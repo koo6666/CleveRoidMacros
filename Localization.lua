@@ -44,6 +44,7 @@ if CleveRoids.Locale == "enUS" or CleveRoids.Locale == "enGB" then
     CleveRoids.Localized.Spells = {
         ["Shadow Form"] = "Shadow Form",
         ["Stealth"]     = "Stealth",
+        ["Prowl"]       = "Prowl",
     }
 elseif CleveRoids.Locale == "deDE" then
     CleveRoids.Localized.Shield     = "Shields"
@@ -82,6 +83,7 @@ elseif CleveRoids.Locale == "deDE" then
     CleveRoids.Localized.Spells = {
         ["Shadow Form"] = "Schattengestalt",
         ["Stealth"]     = "Verstohlenheit",
+        ["Prowl"]       = "Schleichen",
     }
 elseif CleveRoids.Locale == "frFR" then
     CleveRoids.Localized.Shield     = "Shields"
@@ -120,6 +122,7 @@ elseif CleveRoids.Locale == "frFR" then
     CleveRoids.Localized.Spells = {
         ["Shadow Form"] = "Forme d'Ombre",
         ["Stealth"]     = "Camouflage",
+        ["Prowl"]       = "Rôder",
     }
 elseif CleveRoids.Locale == "koKR" then
     CleveRoids.Localized.Shield     = "Shields"
@@ -157,6 +160,7 @@ elseif CleveRoids.Locale == "koKR" then
     CleveRoids.Localized.Spells = {
         ["Shadow Form"] = "어둠의 형상",
         ["Stealth"]     = "은신",
+        ["Prowl"]       = "숨기",
     }
 elseif CleveRoids.Locale == "zhCN" then
     CleveRoids.Localized.Shield     = "Shields"
@@ -195,6 +199,7 @@ elseif CleveRoids.Locale == "zhCN" then
     CleveRoids.Localized.Spells = {
         ["Shadow Form"] = "暗影形态",
         ["Stealth"]     = "潜行",
+        ["Prowl"]       = "潜行",
     }
 elseif CleveRoids.Locale == "zhTW" then
     CleveRoids.Localized.Shield     = "Shields"
@@ -233,6 +238,7 @@ elseif CleveRoids.Locale == "zhTW" then
     CleveRoids.Localized.Spells = {
         ["Shadow Form"] = "暗影形態",
         ["Stealth"]     = "隱形",
+        ["Prowl"]       = "徘徊",
     }
 elseif CleveRoids.Locale == "ruRU" then
     CleveRoids.Localized.Shield     = "Shields"
@@ -271,6 +277,7 @@ elseif CleveRoids.Locale == "ruRU" then
     CleveRoids.Localized.Spells = {
         ["Shadow Form"] = "Облик Тени",
         ["Stealth"]     = "Незаметность",
+        ["Prowl"]       = "Крадущийся зверь",
     }
 elseif CleveRoids.Locale == "esES" then
     CleveRoids.Localized.Shield     = "Shields"
@@ -309,6 +316,7 @@ elseif CleveRoids.Locale == "esES" then
     CleveRoids.Localized.Spells = {
         ["Shadow Form"] = "Forma de las Sombras",
         ["Stealth"]     = "Sigilo",
+        ["Prowl"]       = "Acechar",
     }
 end
 
