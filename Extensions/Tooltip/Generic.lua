@@ -95,12 +95,14 @@ function CleveRoids.IndexItems()
                             type = itemType,
                             count = count,
                             texture = texture,
-                            link = link
+                            link = link,
+                            bagSlots = {{bagID, slot}},
+                            slotsIndex = 1,
                         }
+                        items[itemID] = name
                     else
-                        if count then
-                            items[name].count = (items[name].count or 0) + count
-                        end
+                        items[name].count = (items[name].count or 0) + (count or 0)
+                        table.insert(items[name].bagSlots, {bagID, slot})
                     end
                 end
             end
@@ -121,17 +123,17 @@ function CleveRoids.IndexItems()
                         name = name,
                         count = count,
                         texture = texture,
-                        link = link
+                        link = link,
                     }
                 else
-                    if count then
-                        items[name].count = (items[name].count or 0) + count
-                    end
+                    items[name].inventoryID = inventoryID
+                    items[name].count = (items[name].count or 0) + (count or 0)
                 end
             end
         end
     end
 
+    CleveRoids.lastGetItem = nil
     CleveRoids.Items = items
 
     -- relink an item action to the item if it wasn't in inventory/bags before
@@ -208,16 +210,13 @@ function CleveRoids.GetTalent(text)
 end
 
 function CleveRoids.GetItem(text)
-    if CleveRoids.Items[text] then
-        return CleveRoids.Items[text]
-    elseif text == tostring(tonumber(text)) then
-        for name, item in pairs(CleveRoids.Items) do
-            if item.id == text then
-                return item
-            end
+    local item = CleveRoids.Items[text]
 
-        end
-
+    if item then
+        -- Items are stored as [name]->{item} and [id]->name
+        if type(item) == "table" then return item end
+        return CleveRoids.Items[item]
+    else
         local name, link, _, _, itemType, _, _, _, texture = GetItemInfo(text)
         if not name then
             return
@@ -235,6 +234,19 @@ function CleveRoids.GetItem(text)
     end
 end
 
+function CleveRoids.GetNextBagSlotForUse(item, text)
+    if not item then return end
+
+    if CleveRoids.lastGetItem == CleveRoids.GetItem(text) then
+        if table.getn(item.bagSlots) > item.slotsIndex then
+            item.slotsIndex = item.slotsIndex + 1
+            item.bagID, item.slot = unpack(item.bagSlots[item.slotsIndex])
+        end
+    end
+
+    CleveRoids.lastGetItem = item
+    return item
+end
 
 local Extension = CleveRoids.RegisterExtension("Generic_show")
 Extension.RegisterEvent("SPELLS_CHANGED", "SPELLS_CHANGED")

@@ -27,6 +27,7 @@ CleveRoids.Actions   = {}
 CleveRoids.Sequences = {}
 
 CleveRoids.lastUpdate = 0
+CleveRoids.lastGetItem = nil
 CleveRoids.currentSequence = nil
 
 CleveRoids.bookTypes = {BOOKTYPE_SPELL, BOOKTYPE_PET}

@@ -24,8 +24,10 @@ SlashCmdList.EQUIP = CleveRoids.DoUse
 SlashCmdList.SMEQUIP = CleveRoids.DoUse
 SlashCmdList.PFEQUIP = CleveRoids.DoUse
 
-SLASH_EQUIPOH1 = "/equipoh"
+SLASH_EQUIPMH1 = "/equipmh"
+SlashCmdList.EQUIPMH = CleveRoids.DoEquipMainhand
 
+SLASH_EQUIPOH1 = "/equipoh"
 SlashCmdList.EQUIPOH = CleveRoids.DoEquipOffhand
 
 SLASH_UNSHIFT1 = "/unshift"

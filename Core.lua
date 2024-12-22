@@ -758,9 +758,8 @@ function CleveRoids.DoUse(msg)
 
         if item and item.inventoryID then
             return UseInventoryItem(item.inventoryID)
-        end
-
-        if item and item.bagID then
+        elseif item and item.bagID then
+            CleveRoids.GetNextBagSlotForUse(item, msg)
             return UseContainerItem(item.bagID, item.slot)
         end
 
@@ -785,17 +784,50 @@ function CleveRoids.DoUse(msg)
     return handled
 end
 
+function CleveRoids.EquipBagItem(msg, offhand)
+    local item = CleveRoids.GetItem(msg)
+
+    if not item or (not item.bagID and not item.inventoryID) then
+        return false
+    end
+
+    local invslot = offhand and 17 or 16
+    if item.bagID then
+        CleveRoids.GetNextBagSlotForUse(item, msg)
+        PickupContainerItem(item.bagID, item.slot)
+    else
+        PickupInventoryItem(item.inventoryID)
+    end
+
+    EquipCursorItem(invslot)
+    ClearCursor()
+
+    return true
+end
+
+-- TODO: Refactor all these DoWithConditionals sections
+function CleveRoids.DoEquipMainhand(msg)
+    local handled = false
+
+    local action = function(msg)
+        return CleveRoids.EquipBagItem(msg, false)
+    end
+
+    for k, v in pairs(CleveRoids.splitStringIgnoringQuotes(msg)) do
+        v = string.gsub(v, "^%?", "")
+        if CleveRoids.DoWithConditionals(v, action, CleveRoids.FixEmptyTarget, false, action) then
+            handled = true
+            break
+        end
+    end
+    return handled
+end
+
 function CleveRoids.DoEquipOffhand(msg)
     local handled = false
 
     local action = function(msg)
-        local item = CleveRoids.GetItem(msg)
-        if not item or not item.bagID then
-            return
-        end
-
-        PickupContainerItem(item.bagID, item.slot)
-        PickupInventoryItem(17)
+        return CleveRoids.EquipBagItem(msg, true)
     end
 
     for k, v in pairs(CleveRoids.splitStringIgnoringQuotes(msg)) do
