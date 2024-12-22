@@ -12,7 +12,7 @@ _G.CleveRoids = CleveRoids
 function CleveRoids.GetSpellCost(spellSlot, bookType)
     CleveRoids.Frame:SetOwner(WorldFrame, "ANCHOR_NONE")
     CleveRoids.Frame:SetSpell(spellSlot, bookType)
-    local _, _, cost = string.find(CleveRoids.Frame.costFontString:GetText() or "", "^(%d+) [^y]")
+    local _, _, cost = string.find(CleveRoids.Frame.costFontString:GetText() or "", "^(%d+) [^ys]")
     local _, _, reagent = string.find(CleveRoids.Frame.reagentFontString:GetText() or "", "^Reagents: (.*)")
     if reagent and string.sub(reagent, 1, 2) == "|c" then
         reagent = string.sub(reagent, 11, -3)
