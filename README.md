@@ -63,7 +63,8 @@ Both [SuperWoW](https://github.com/balakethelock/SuperWoW) and [Nampower](https:
 * Added changes to make usable/mana/range updating show properly in pfUI.
 * Added Bongos action bars compatibility support
 * Added /runmacro command. Same as /cast {macroname} but always ignores icon/tooltip
-* Added /retarget command: Clears your target if it doesn't exist, has 0 hp or if you can't attack it and then targets the nearest enemy
+* Added /retarget command. Clears your target if it doesn't exist, has 0 hp or if you can't attack it and then targets the nearest enemy
+* Added /equipmh command. Equips the weapon into your mainhand slot. 
 * Added ? flag to prevent an action from affecting the icon/tooltips.  It must be the first character. 
 * Updated ! flag as a way to easily make spammable abilities.  For non-auto repeating abilities, it's really just a shortcut for `nomybuff`
 * Added ~ flag to either cast or cancel the buff/aura if possible
@@ -145,8 +146,9 @@ Both [SuperWoW](https://github.com/balakethelock/SuperWoW) and [Nampower](https:
 | /stopattack           | Stops auto-attacking. |
 | /stopcasting          | Stops casting. |
 | /petattack            | Starts your pet's auto-attack. |
-| /castsequence         | Performs a cast sequence.  See below for more infomation. |
+| /castsequence         | Performs a cast sequence.  See [below](#cast-sequence) for more infomation. |
 | /equip                | Equips an item by name or itemid. |
+| /equipmh              | Equips an item by name or itemid into your mainhand slot. |
 | /equipoh              | Equips an item by name or itemid into your offhand slot. |
 | /unshift              | Cancels your current shapeshift form. |
 | /cancelaura, /unbuff  | Cancels a valid buff/aura. |
@@ -216,7 +218,7 @@ Both [SuperWoW](https://github.com/balakethelock/SuperWoW) and [Nampower](https:
 | combat         | [combat] |  | * | If the player is in combat. |
 | combo          | [combo:>#3]<br/>[combo:#2]</br>[combo:<#5] |   |  * |  If the player has the specified number of combo points. |
 | cooldown       | [cooldown:"Spell Or Item Name"]<br/>[cooldown:"Spell or Item Name">X]<br/>[cooldown:"Spell or Item Name"<X] | * | * | If the Spell or Item is on cooldown and optionally if the amount of time left is >= or <= than X seconds. **GCD (if exatly 1.5 sec) IGNORED** |
-| equipped       | [equipped:"Item Name"]<br/>[equipped:Shields]<br/>[equipped:Daggers2] | * | * | If the player has an item or item type equipped.  See below for a list of valid Weapon Types. |
+| equipped       | [equipped:"Item Name"]<br/>[equipped:Shields]<br/>[equipped:Daggers2] | * | * | If the player has an item or item type equipped.  See [below](#weapon-types) for a list of valid Weapon Types. |
 | form           | [form:0/1/2/3/4/5] | * |  | Alias of stance |
 | group          | [group]<br/>[group:party/raid] | * | * | If the player is in a group. |
 | known          | [known:"Spell"]</br>[known:"Talent>#2"] | * | * | If the player knows a spell or talent.  Can optionally check the rank. |
@@ -249,7 +251,7 @@ Both [SuperWoW](https://github.com/balakethelock/SuperWoW) and [Nampower](https:
 | power          | [power>X]<br/>[power<Y] |  |  | If the @unitid has power (mana/rage/energy) >= or <= than Y percent. |
 | rawpower       | [rawpower>X]<br/>[rawpower<X] |  |  | If the @unitid has power (mana/rage/energy) >= or <= than Y. |
 | hp             | [hp>X]<br/>[hp<Y] |  |  | If the @unitid health is >= or <= than Y percent. |
-| type           | [type:"Creature Type"] | * | * | If the @unitid is the specified creature type.  See below for a list of valid Creature Types. |
+| type           | [type:"Creature Type"] | * | * | If the @unitid is the specified creature type.  See [below](#creature-types) for a list of valid Creature Types. |
 | targeting      | [targeting:unitid] | * | * | If the @unitid is targeting the specified unitid.<br/>See this [article](https://wowpedia.fandom.com/wiki/UnitId) for a list of unitids.<br/>Not all units are valid in vanilla. |
 | isplayer       | [isplayer:unitid] | * |  | If the unitid is a player.<br/>See this [article](https://wowpedia.fandom.com/wiki/UnitId) for a list of unitids.<br/>Not all units are valid in vanilla. |
 | isnpc          | [isnpc:unitid] | * |  | If the unitid is an npc.<br/>See this [article](https://wowpedia.fandom.com/wiki/UnitId) for a list of unitids.<br/>Not all units are valid in vanilla. |
