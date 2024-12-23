@@ -483,11 +483,8 @@ function CleveRoids.ParseMsg(msg)
 
                     -- Split the args by / for multiple values
                     for _, arg in CleveRoids.splitString(args, "/") do
-                        -- Remove quotes around conditional args
-                        if string.sub((arg or ""), 1, 1) == "\"" then
-                            arg = string.sub(arg, 2, -2)
-                        end
-                        -- Replace any _ with spaces, put the = operator back in if shorthand was used
+                        -- Remove quotes around conditional args and replace any _ with spaces, put the = operator back in if shorthand was used
+                        arg = string.gsub(arg, '"', "")
                         arg = string.gsub(arg, "_", " ")
                         arg = string.gsub(arg, "[^>~=<]+#(%d+)", "=#%1")
 
