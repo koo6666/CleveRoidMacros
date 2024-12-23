@@ -365,11 +365,12 @@ function CleveRoids.ParseMacro(name)
 
     local _, texture, body = GetMacroInfo(macroID)
 
-    if not body and SuperMacroFrame ~= nil then
-        body = GetSuperMacroInfo(name, "body")
+    if not body and GetSuperMacroInfo then
+        _, texture, body = GetSuperMacroInfo(name)
     end
 
     if not texture or not body then return end
+
 
     local macro = {
         id = macroId,
@@ -1144,7 +1145,7 @@ function CleveRoids.Frame:PLAYER_LOGIN()
 end
 
 function CleveRoids.Frame:ADDON_LOADED(addon)
-    if addon ~= "Roid-Macros" then
+    if addon ~= "CleveRoidMacros" then
         return
     end
 
