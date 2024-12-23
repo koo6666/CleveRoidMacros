@@ -434,7 +434,7 @@ function CleveRoids.ParseMsg(msg)
     msg, conditionals.ignoretooltip = string.gsub(CleveRoids.Trim(msg), "^%?", "")
     local _, cbEnd, conditionBlock = string.find(msg, "%[(.+)%]")
     local _, _, noSpam, cancelAura, action = string.find(string.sub(msg, (cbEnd or 0) + 1), "^%s*(!?)(~?)([^!~]+.*)")
-    action = CleveRoids.Trim(action)
+    action = CleveRoids.Trim(action or "")
 
     -- Store the action along with the conditionals incase it's needed
     conditionals.action = action
