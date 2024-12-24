@@ -697,6 +697,8 @@ function CleveRoids.DoWithConditionals(msg, hook, fixEmptyTargetFunc, targetBefo
         end
     end
 
+    CleveRoids.castTarget = conditionals.target
+
     local result = true
     if string.sub(msg, 1, 1) == "{" and string.sub(msg, -1) == "}" then
         if string.sub(msg, 2, 2) == "\"" and string.sub(msg, -2,-2) == "\"" then
@@ -706,7 +708,22 @@ function CleveRoids.DoWithConditionals(msg, hook, fixEmptyTargetFunc, targetBefo
         end
     else
         if CleveRoids.hasSuperwow and action == CastSpellByName and conditionals.target then
-            action(msg,conditionals.target)
+            -- from pfUI pfcast in order to support HealComm getting the proper target
+            local cvar_selfcast = GetCVar("AutoSelfCast")
+
+            if cvar_selfcast ~= "0" then
+                SetCVar("AutoSelfCast", "0")
+                pcall(CastSpellByName, msg)
+                SetCVar("AutoSelfCast", cvar_selfcast)
+            else
+                CastSpellByName(spell)
+            end
+
+            -- set spell target to unitstring (or selfcast)
+            if SpellIsTargeting() then SpellTargetUnit(conditionals.target) end
+
+            -- clean up spell target in error case
+            if SpellIsTargeting() then SpellStopTargeting() end
         else
             action(msg)
         end
@@ -971,7 +988,7 @@ function CleveRoids.OnUpdate(self)
     CleveRoids.IndexActionBars()
 end
 
-CleveRoids.base.GameTooltip.SetAction = GameTooltip.SetAction
+CleveRoids.Hooks.GameTooltip.SetAction = GameTooltip.SetAction
 function GameTooltip.SetAction(self, slot)
     local actions = CleveRoids.GetAction(slot)
 
@@ -991,54 +1008,54 @@ function GameTooltip.SetAction(self, slot)
 
         end
     else
-        CleveRoids.base.GameTooltip.SetAction(self, slot)
+        CleveRoids.Hooks.GameTooltip.SetAction(self, slot)
     end
 end
 
-CleveRoids.base.PickupAction = PickupAction
+CleveRoids.Hooks.PickupAction = PickupAction
 function PickupAction(slot)
     CleveRoids.ClearAction(slot)
     CleveRoids.ClearSlot(CleveRoids.actionSlots, slot)
     CleveRoids.ClearAction(CleveRoids.reactiveSlots, slot)
-    return CleveRoids.base.PickupAction(slot)
+    return CleveRoids.Hooks.PickupAction(slot)
 end
 
-CleveRoids.base.ActionHasRange = ActionHasRange
+CleveRoids.Hooks.ActionHasRange = ActionHasRange
 function ActionHasRange(slot)
     local actions = CleveRoids.GetAction(slot)
     if actions and actions.active then
         return (1 and actions.active.inRange ~= -1 or nil)
     else
-        return CleveRoids.base.ActionHasRange(slot)
+        return CleveRoids.Hooks.ActionHasRange(slot)
     end
 end
 
-CleveRoids.base.IsActionInRange = IsActionInRange
+CleveRoids.Hooks.IsActionInRange = IsActionInRange
 function IsActionInRange(slot, unit)
     local actions = CleveRoids.GetAction(slot)
     if actions and actions.active and actions.active.type == "spell" then
         return actions.active.inRange
     else
-        return CleveRoids.base.IsActionInRange(slot, unit)
+        return CleveRoids.Hooks.IsActionInRange(slot, unit)
     end
 end
 
-CleveRoids.base.IsUsableAction = IsUsableAction
+CleveRoids.Hooks.IsUsableAction = IsUsableAction
 function IsUsableAction(slot, unit)
     local actions = CleveRoids.GetAction(slot)
     if actions and actions.active then
         return actions.active.usable, actions.active.oom
     else
-        return CleveRoids.base.IsUsableAction(slot, unit)
+        return CleveRoids.Hooks.IsUsableAction(slot, unit)
     end
 end
 
-CleveRoids.base.IsCurrentAction = IsCurrentAction
+CleveRoids.Hooks.IsCurrentAction = IsCurrentAction
 function IsCurrentAction(slot)
     local active = CleveRoids.GetActiveAction(slot)
 
     if not active then
-        return CleveRoids.base.IsCurrentAction(slot)
+        return CleveRoids.Hooks.IsCurrentAction(slot)
     else
         local name
         if active.spell then
@@ -1048,27 +1065,27 @@ function IsCurrentAction(slot)
             name = active.item.name
         end
 
-        return CleveRoids.base.IsCurrentAction(CleveRoids.GetProxyActionSlot(name) or slot)
+        return CleveRoids.Hooks.IsCurrentAction(CleveRoids.GetProxyActionSlot(name) or slot)
     end
 end
 
-CleveRoids.base.GetActionTexture = GetActionTexture
+CleveRoids.Hooks.GetActionTexture = GetActionTexture
 function GetActionTexture(slot)
     local actions = CleveRoids.GetAction(slot)
 
     if actions and (actions.active or actions.tooltip) then
         local proxySlot = (actions.active and actions.active.spell) and CleveRoids.GetProxyActionSlot(actions.active.spell.name)
-        if proxySlot and CleveRoids.base.GetActionTexture(proxySlot) ~= actions.active.spell.texture then
-            return CleveRoids.base.GetActionTexture(proxySlot)
+        if proxySlot and CleveRoids.Hooks.GetActionTexture(proxySlot) ~= actions.active.spell.texture then
+            return CleveRoids.Hooks.GetActionTexture(proxySlot)
         else
             return (actions.active and actions.active.texture) or (actions.tooltip and actions.tooltip.texture) or CleveRoids.unknownTexture
         end
     end
-    return CleveRoids.base.GetActionTexture(slot)
+    return CleveRoids.Hooks.GetActionTexture(slot)
 end
 
 -- TODO: Look into https://github.com/Stanzilla/WoWUIBugs/issues/47 if needed
-CleveRoids.base.GetActionCooldown = GetActionCooldown
+CleveRoids.Hooks.GetActionCooldown = GetActionCooldown
 function GetActionCooldown(slot)
     local actions = CleveRoids.GetAction(slot)
     if actions and actions.active then
@@ -1084,11 +1101,11 @@ function GetActionCooldown(slot)
         end
         return 0, 0, 0
     else
-        return CleveRoids.base.GetActionCooldown(slot)
+        return CleveRoids.Hooks.GetActionCooldown(slot)
     end
 end
 
-CleveRoids.base.GetActionCount = GetActionCount
+CleveRoids.Hooks.GetActionCount = GetActionCount
 function GetActionCount(slot)
     local action = CleveRoids.GetAction(slot)
     local count
@@ -1101,10 +1118,10 @@ function GetActionCount(slot)
         end
     end
 
-    return count or CleveRoids.base.GetActionCount(slot)
+    return count or CleveRoids.Hooks.GetActionCount(slot)
 end
 
-CleveRoids.base.IsConsumableAction = IsConsumableAction
+CleveRoids.Hooks.IsConsumableAction = IsConsumableAction
 function IsConsumableAction(slot)
     local action = CleveRoids.GetAction(slot)
     if action and action.active then
@@ -1120,7 +1137,7 @@ function IsConsumableAction(slot)
         end
     end
 
-    return CleveRoids.base.IsConsumableAction(slot)
+    return CleveRoids.Hooks.IsConsumableAction(slot)
 end
 
 

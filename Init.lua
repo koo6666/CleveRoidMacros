@@ -4,10 +4,9 @@ _G.CleveRoids = CleveRoids
 
 CleveRoids.ready = false
 
-CleveRoids.base             = {}
-CleveRoids.base.GameTooltip = {}
+CleveRoids.Hooks             = CleveRoids.Hooks      or {}
+CleveRoids.Hooks.GameTooltip = {}
 
-CleveRoids.Hooks               = CleveRoids.Hooks      or {}
 CleveRoids.Extensions          = CleveRoids.Extensions or {}
 CleveRoids.actionEventHandlers = {}
 CleveRoids.mouseOverResolvers  = {}
