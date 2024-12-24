@@ -403,7 +403,7 @@ function CleveRoids.ParseMacro(name)
             local cmd, args = CleveRoids.SplitCommandAndArgs(line)
 
             -- make sure we have a testable action
-            if line ~= "" and cmd ~= "" and args ~= "" and not CleveRoids.ignoreCmds[string.lower(cmd)] then
+            if line ~= "" and args ~= "" and CleveRoids.dynamicCmds[cmd] then
                 for _, arg in CleveRoids.splitStringIgnoringQuotes(args) do
                     local action = CleveRoids.CreateActionInfo(CleveRoids.GetParsedMsg(arg))
 
@@ -566,7 +566,7 @@ function CleveRoids.TestAction(cmd, args)
 
     CleveRoids.SetHelp(conditionals)
 
-    if cmd == "" or CleveRoids.ignoreCmds[string.lower(cmd)] then
+    if cmd == "" or not CleveRoids.dynamicCmds[cmd] then
         -- untestables
         return
     else

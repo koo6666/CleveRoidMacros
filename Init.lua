@@ -49,18 +49,13 @@ CleveRoids.CurrentSpell = {
     wand = false,
 }
 
-CleveRoids.ignoreCmds = {
-    ["/run"]         = true,
-    ["/script"]      = true,
-    ["/startattack"] = true,
-    ["/stopattack"]  = true,
-    ["/stopcasting"] = true,
-    ["/petattack"]   = true,
-    ["/unshift"]     = true,
-    ["/cancelaura"]  = true,
-    ["/unbuff"]      = true,
-    ["/runmacro"]    = true,
-    ["/console"]     = true,
+CleveRoids.dynamicCmds = {
+    ["/cast"]         = true,
+    ["/castsequence"] = true,
+    ["/use"]          = true,
+    ["/equip"]        = true,
+    ["/equipmh"]      = true,
+    ["/equipoh"]      = true,
 }
 
 CleveRoids.ignoreKeywords = {
