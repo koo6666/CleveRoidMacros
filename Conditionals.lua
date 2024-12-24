@@ -233,7 +233,10 @@ function CleveRoids.ValidateResting()
     return IsResting()
 end
 
--- Checks whether or not the given unit has more or less power in percent than the given amount
+
+-- TODO: refactor numeric comparisons...
+
+-- Checks whether or not the given unit has power in percent vs the given amount
 -- unit: The unit we're checking
 -- operator: valid comparitive operator symbol
 -- amount: The required amount
@@ -249,7 +252,7 @@ function CleveRoids.ValidatePower(unit, operator, amount)
     return false
 end
 
--- Checks whether or not the given unit has more or less total power than the given amount
+-- Checks whether or not the given unit has current power vs the given amount
 -- unit: The unit we're checking
 -- operator: valid comparitive operator symbol
 -- amount: The required amount
@@ -265,17 +268,65 @@ function CleveRoids.ValidateRawPower(unit, operator, amount)
     return false
 end
 
--- Checks whether or not the given unit has more or less hp in percent than the given amount
+-- Checks whether or not the given unit has a power deficit vs the amount specified
+-- unit: The unit we're checking
+-- operator: valid comparitive operator symbol
+-- amount: The required amount
+-- returns: True or false
+function CleveRoids.ValidatePowerLost(unit, operator, amount)
+    if not unit or not operator or not amount then return false end
+    local powerLost = UnitManaMax(unit) - UnitMana(unit)
+
+    if CleveRoids.operators[operator] then
+        return CleveRoids.comparators[operator](powerLost, amount)
+    end
+
+    return false
+end
+
+-- Checks whether or not the given unit has hp in percent vs the given amount
 -- unit: The unit we're checking
 -- operator: valid comparitive operator symbol
 -- amount: The required amount
 -- returns: True or false
 function CleveRoids.ValidateHp(unit, operator, amount)
     if not unit or not operator or not amount then return false end
-    local powerPercent = 100 / UnitHealthMax(unit) * UnitHealth(unit)
+    local hpPercent = 100 / UnitHealthMax(unit) * UnitHealth(unit)
 
     if CleveRoids.operators[operator] then
-        return CleveRoids.comparators[operator](powerPercent, amount)
+        return CleveRoids.comparators[operator](hpPercent, amount)
+    end
+
+    return false
+end
+
+-- Checks whether or not the given unit has hp vs the given amount
+-- unit: The unit we're checking
+-- operator: valid comparitive operator symbol
+-- amount: The required amount
+-- returns: True or false
+function CleveRoids.ValidateRawHp(unit, operator, amount)
+    if not unit or not operator or not amount then return false end
+    local rawhp = UnitHealth(unit)
+
+    if CleveRoids.operators[operator] then
+        return CleveRoids.comparators[operator](rawhp, amount)
+    end
+
+    return false
+end
+
+-- Checks whether or not the given unit has an hp deficit vs the amount specified
+-- unit: The unit we're checking
+-- operator: valid comparitive operator symbol
+-- amount: The required amount
+-- returns: True or false
+function CleveRoids.ValidateHpLost(unit, operator, amount)
+    if not unit or not operator or not amount then return false end
+    local hpLost = UnitHealthMax(unit) - UnitHealth(unit)
+
+    if CleveRoids.operators[operator] then
+        return CleveRoids.comparators[operator](hpLost, amount)
     end
 
     return false
@@ -493,7 +544,7 @@ end
 -- A list of Conditionals and their functions to validate them
 CleveRoids.Keywords = {
     exists = function(conditionals)
-        return UnitExists(conditionals.target or "target")
+        return UnitExists(conditionals.target)
     end,
 
     help = function(conditionals)
@@ -563,16 +614,16 @@ CleveRoids.Keywords = {
     end,
 
     casting = function(conditionals)
-        if type(conditionals.casting) ~= "table" then return CleveRoids.CheckSpellCast(conditionals.target or "target", "") end
+        if type(conditionals.casting) ~= "table" then return CleveRoids.CheckSpellCast(conditionals.target, "") end
         return Or(conditionals.casting, function (spell)
-            return CleveRoids.CheckSpellCast(conditionals.target or "target", spell)
+            return CleveRoids.CheckSpellCast(conditionals.target, spell)
         end)
     end,
 
     nocasting = function(conditionals)
-        if type(conditionals.nocasting) ~= "table" then return CleveRoids.CheckSpellCast(conditionals.target or "target", "") end
+        if type(conditionals.nocasting) ~= "table" then return CleveRoids.CheckSpellCast(conditionals.target, "") end
         return And(conditionals.nocasting, function (spell)
-            return not CleveRoids.CheckSpellCast(conditionals.target or "target", spell)
+            return not CleveRoids.CheckSpellCast(conditionals.target, spell)
         end)
     end,
 
@@ -605,11 +656,11 @@ CleveRoids.Keywords = {
     end,
 
     dead = function(conditionals)
-        return UnitIsDeadOrGhost(conditionals.target or "target")
+        return UnitIsDeadOrGhost(conditionals.target)
     end,
 
     alive = function(conditionals)
-        return not UnitIsDeadOrGhost(conditionals.target or "target")
+        return not UnitIsDeadOrGhost(conditionals.target)
     end,
 
     reactive = function(conditionals)
@@ -627,25 +678,25 @@ CleveRoids.Keywords = {
     member = function(conditionals)
         return Or(conditionals.member, function(v)
             return
-                CleveRoids.IsTargetInGroupType(conditionals.target or "target", "party")
-                or CleveRoids.IsTargetInGroupType(conditionals.target or "target", "raid")
+                CleveRoids.IsTargetInGroupType(conditionals.target, "party")
+                or CleveRoids.IsTargetInGroupType(conditionals.target, "raid")
         end)
     end,
 
     party = function(conditionals)
-        return CleveRoids.IsTargetInGroupType(conditionals.target or "target", "party")
+        return CleveRoids.IsTargetInGroupType(conditionals.target, "party")
     end,
 
     noparty = function(conditionals)
-        return not CleveRoids.IsTargetInGroupType(conditionals.target or "target", "party")
+        return not CleveRoids.IsTargetInGroupType(conditionals.target, "party")
     end,
 
     raid = function(conditionals)
-        return CleveRoids.IsTargetInGroupType(conditionals.target or "target", "raid")
+        return CleveRoids.IsTargetInGroupType(conditionals.target, "raid")
     end,
 
     noraid = function(conditionals)
-        return not CleveRoids.IsTargetInGroupType(conditionals.target or "target", "raid")
+        return not CleveRoids.IsTargetInGroupType(conditionals.target, "raid")
     end,
 
     group = function(conditionals)
@@ -669,25 +720,25 @@ CleveRoids.Keywords = {
 
     buff = function(conditionals)
         return Or(conditionals.buff, function(v)
-            return CleveRoids.ValidateUnitBuff(conditionals.target or "target", v)
+            return CleveRoids.ValidateUnitBuff(conditionals.target, v)
         end)
     end,
 
     nobuff = function(conditionals)
         return And(conditionals.nobuff, function(v)
-            return not CleveRoids.ValidateUnitBuff(conditionals.target or "target", v)
+            return not CleveRoids.ValidateUnitBuff(conditionals.target, v)
         end)
     end,
 
     debuff = function(conditionals)
         return Or(conditionals.debuff, function(v)
-            return CleveRoids.ValidateUnitDebuff(conditionals.target or "target", v)
+            return CleveRoids.ValidateUnitDebuff(conditionals.target, v)
         end)
     end,
 
     nodebuff = function(conditionals)
         return And(conditionals.nodebuff, function(v)
-            return not CleveRoids.ValidateUnitDebuff(conditionals.target or "target", v)
+            return not CleveRoids.ValidateUnitDebuff(conditionals.target, v)
         end)
     end,
 
@@ -717,49 +768,95 @@ CleveRoids.Keywords = {
 
     power = function(conditionals)
         return And(conditionals.power, function(args)
-            return CleveRoids.ValidatePower(args.target or "target", args.operator, args.amount)
+            if type(args) ~= "table" then return false end
+            return CleveRoids.ValidatePower(conditionals.target, args.operator, args.amount)
         end)
     end,
 
     mypower = function(conditionals)
         return And(conditionals.mypower, function(args)
+            if type(args) ~= "table" then return false end
             return CleveRoids.ValidatePower("player", args.operator, args.amount)
         end)
     end,
 
     rawpower = function(conditionals)
         return And(conditionals.rawpower, function(args)
-            return CleveRoids.ValidateRawPower(args.target or "target", args.operator, args.amount)
+            if type(args) ~= "table" then return false end
+            return CleveRoids.ValidateRawPower(conditionals.target, args.operator, args.amount)
         end)
     end,
 
     myrawpower = function(conditionals)
         return And(conditionals.myrawpower, function(args)
+            if type(args) ~= "table" then return false end
             return CleveRoids.ValidateRawPower("player", args.operator, args.amount)
+        end)
+    end,
+
+    powerlost = function(conditionals)
+        return And(conditionals.powerlost, function(args)
+            if type(args) ~= "table" then return false end
+            return CleveRoids.ValidatePowerLost(conditionals.target, args.operator, args.amount)
+        end)
+    end,
+
+    mypowerlost = function(conditionals)
+        return And(conditionals.mypowerlost, function(args)
+            if type(args) ~= "table" then return false end
+            return CleveRoids.ValidatePowerLost("player", args.operator, args.amount)
         end)
     end,
 
     hp = function(conditionals)
         return And(conditionals.hp, function(args)
-            return CleveRoids.ValidateHp(args.target or "target", args.operator, args.amount)
+            if type(args) ~= "table" then return false end
+            return CleveRoids.ValidateHp(conditionals.target, args.operator, args.amount)
         end)
     end,
 
     myhp = function(conditionals)
         return And(conditionals.myhp, function(args)
+            if type(args) ~= "table" then return false end
             return CleveRoids.ValidateHp("player", args.operator, args.amount)
         end)
     end,
 
+    rawhp = function(conditionals)
+        return And(conditionals.rawphp, function(args)
+            if type(args) ~= "table" then return false end
+            return CleveRoids.ValidateRawHp(conditionals.target, args.operator, args.amount)
+        end)
+    end,
+
+    myrawhp = function(conditionals)
+        return And(conditionals.myrawhp, function(args)
+            if type(args) ~= "table" then return false end
+            return CleveRoids.ValidateRawHp("player", args.operator, args.amount)
+        end)
+    end,
+
+    hplost = function(conditionals)
+        return And(conditionals.hplost, function(args)
+            if type(args) ~= "table" then return false end
+            return CleveRoids.ValidateHpLost(conditionals.target, args.operator, args.amount)
+        end)
+    end,
+
+    myhplost = function(conditionals)
+        return And(conditionals.myhplost, function(args)
+            if type(args) ~= "table" then return false end
+            return CleveRoids.ValidateHpLost("player", args.operator, args.amount)
+        end)
+    end,
+
     type = function(conditionals)
-        if not conditionals.target then conditionals.target = "target" end
         return Or(conditionals.type, function(unittype)
             return CleveRoids.ValidateCreatureType(unittype, conditionals.target)
         end)
     end,
 
     notype = function(conditionals)
-        if not conditionals.target then conditionals.target = "target" end
         return And(conditionals.type, function(unittype)
             return not CleveRoids.ValidateCreatureType(unittype, conditionals.target)
         end)
