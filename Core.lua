@@ -204,16 +204,16 @@ function CleveRoids.SetHelp(conditionals)
     end
 end
 
-function CleveRoids.FixEmptyTarget(target)
-    if not target then
+function CleveRoids.FixEmptyTarget(conditionals)
+    if not conditionals.target then
         if UnitExists("target") then
-            target = "target"
+            conditionals.target = "target"
         elseif GetCVar("autoSelfCast") == "1" then
-            target = "player"
+            conditionals.target = "player"
         end
     end
 
-    return target
+    return false
 end
 
 -- Fixes the conditionals' target by targeting the target with the given name
@@ -564,23 +564,37 @@ function CleveRoids.TestAction(cmd, args)
         end
     end
 
-    CleveRoids.SetHelp(conditionals)
-
+    local origTarget = conditionals.target
     if cmd == "" or not CleveRoids.dynamicCmds[cmd] then
         -- untestables
         return
-    else
-        for k, v in pairs(conditionals) do
-            if not CleveRoids.ignoreKeywords[k] then
-                if not CleveRoids.Keywords[k] or not CleveRoids.Keywords[k](conditionals) then
-                    -- failed test
-                    return
-                end
+    end
+
+    if conditionals.target == "mouseover" then
+        if not UnitExists("mouseover") then
+            conditionals.target = CleveRoids.mouseoverUnit or "mouseover"
+        end
+        if not conditionals.target or (conditionals.target ~= "focus" and not UnitExists(conditionals.target)) then
+            conditionals.target = origTarget
+            return false
+        end
+    end
+
+    CleveRoids.FixEmptyTarget(conditionals)
+    CleveRoids.SetHelp(conditionals)
+
+    for k, v in pairs(conditionals) do
+        if not CleveRoids.ignoreKeywords[k] then
+            if not CleveRoids.Keywords[k] or not CleveRoids.Keywords[k](conditionals) then
+                -- failed test
+                conditionals.target = origTarget
+                return
             end
         end
     end
 
     -- tests passed
+    conditionals.target = origTarget
     return CleveRoids.GetMacroNameFromAction(msg) or msg
 end
 
@@ -619,13 +633,20 @@ function CleveRoids.DoWithConditionals(msg, hook, fixEmptyTargetFunc, targetBefo
         end
     end
 
+    local origTarget = conditionals.target
     if conditionals.target == "mouseover" then
         if not UnitExists("mouseover") then
             conditionals.target = CleveRoids.mouseoverUnit or "mouseover"
         end
         if not conditionals.target or (conditionals.target ~= "focus" and not UnitExists(conditionals.target)) then
+            conditionals.target = origTarget
             return false
         end
+    end
+
+    local needRetarget = false;
+    if fixEmptyTargetFunc then
+        needRetarget = fixEmptyTargetFunc(conditionals, msg, hook)
     end
 
     CleveRoids.SetHelp(conditionals)
@@ -637,6 +658,7 @@ function CleveRoids.DoWithConditionals(msg, hook, fixEmptyTargetFunc, targetBefo
             needRetarget = false
         else
             if not CleveRoids.TryTargetFocus() then
+                conditionals.target = origTarget
                 return false
             end
             conditionals.target = "target"
@@ -651,6 +673,7 @@ function CleveRoids.DoWithConditionals(msg, hook, fixEmptyTargetFunc, targetBefo
                     TargetLastTarget()
                     needRetarget = false
                 end
+                conditionals.target = origTarget
                 return false
             end
         end
@@ -693,6 +716,7 @@ function CleveRoids.DoWithConditionals(msg, hook, fixEmptyTargetFunc, targetBefo
         TargetLastTarget()
     end
 
+    conditionals.target = origTarget
     return result
 end
 
@@ -736,6 +760,7 @@ end
 -- msg: The raw message intercepted from a /petattack command
 function CleveRoids.DoPetAttack(msg)
     local handled = false
+
     for k, v in pairs(CleveRoids.splitStringIgnoringQuotes(msg)) do
         if CleveRoids.DoWithConditionals(v, PetAttack, CleveRoids.FixEmptyTarget, true, PetAttack) then
             handled = true
@@ -769,12 +794,14 @@ function CleveRoids.DoUse(msg)
         local subject = v
         local _,e = string.find(v,"%]")
         if e then subject = CleveRoids.Trim(string.sub(v,e+1)) end
+
         if CleveRoids.GetSpell(subject) then
             handled = CleveRoids.DoWithConditionals(v, CleveRoids.Hooks.CAST_SlashCmd, CleveRoids.FixEmptyTarget, not CleveRoids.hasSuperwow, CastSpellByName)
         else
             -- TODO false needs checking here, for things like juju power we have an issue
             -- we need to target the spell but targeting before cast counts as a target change
             -- and this is potentially bad for things like the OH swing timer reset bug
+
             handled = CleveRoids.DoWithConditionals(v, action, CleveRoids.FixEmptyTarget, false, action)
         end
         if handled then break end
@@ -813,6 +840,7 @@ function CleveRoids.DoEquipMainhand(msg)
 
     for k, v in pairs(CleveRoids.splitStringIgnoringQuotes(msg)) do
         v = string.gsub(v, "^%?", "")
+
         if CleveRoids.DoWithConditionals(v, action, CleveRoids.FixEmptyTarget, false, action) then
             handled = true
             break
@@ -830,6 +858,7 @@ function CleveRoids.DoEquipOffhand(msg)
 
     for k, v in pairs(CleveRoids.splitStringIgnoringQuotes(msg)) do
         v = string.gsub(v, "^%?", "")
+
         if CleveRoids.DoWithConditionals(v, action, CleveRoids.FixEmptyTarget, false, action) then
             handled = true
             break
@@ -904,7 +933,9 @@ function CleveRoids.DoCastSequence(sequence)
         CleveRoids.currentSequence = sequence
 
         local action = (sequence.cond or "") .. active.action
-        return CleveRoids.DoWithConditionals(action, nil, nil, not CleveRoids.hasSuperwow, CastSpellByName)
+        local result = CleveRoids.DoWithConditionals(action, nil, nil, not CleveRoids.hasSuperwow, CastSpellByName)
+
+        return result
     end
 end
 

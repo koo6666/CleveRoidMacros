@@ -42,8 +42,6 @@ end
 -- remarks: Will always return true if help is not given
 -- returns: Whether or not the given target can either be attacked or supported, depending on help
 function CleveRoids.CheckHelp(target, help)
-    target = CleveRoids.FixEmptyTarget(target)
-
     if help then
         if help then
             return UnitCanAssist("player", target)
@@ -60,8 +58,6 @@ end
 -- help: Optional. If set to 1 then the target must be friendly. If set to 0 it must be an enemy
 -- returns: Whether or not the target is a viable target
 function CleveRoids.IsValidTarget(target, help)
-    target = CleveRoids.FixEmptyTarget(target)
-
     if target ~= "mouseover" then
         if not CleveRoids.CheckHelp(target, help) or not UnitExists(target) then
 			return false
