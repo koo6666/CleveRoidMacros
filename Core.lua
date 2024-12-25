@@ -758,15 +758,20 @@ function CleveRoids.DoTarget(msg)
 
     local action = function(msg)
         if string.sub(msg, 1, 1) == "@" then
-            msg = UnitName(string.sub(msg, 2))
+            local unit = string.sub(msg, 2)
+            if CleveRoids.hasSuperwow then
+                local _, guid = UnitExists(unit)
+                if guid then TargetUnit(guid) end
+            else
+                CleveRoids.Hooks.TARGET_SlashCmd(UnitName(unit))
+            end
         end
-
-        CleveRoids.Hooks.TARGET_SlashCmd(msg)
     end
 
     for k, v in pairs(CleveRoids.splitStringIgnoringQuotes(msg)) do
         local _, cPos, anyCond = string.find(v, "(%[.*%])")
         local _, _, atTarget = string.find(v, "%s*@([^%s]+)%s*$", (cPos and cPos+1 or 1))
+        if atTarget then handled = true end
         if atTarget and not anyCond then
             v = "[@"..atTarget.."] "..v
         end

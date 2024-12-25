@@ -82,6 +82,7 @@ SlashCmdList.CAST = CleveRoids.CAST_SlashCmd
 
 CleveRoids.Hooks.TARGET_SlashCmd = SlashCmdList.TARGET
 CleveRoids.TARGET_SlashCmd = function(msg)
+    msg = CleveRoids.Trim(msg)
     if CleveRoids.DoTarget(msg) then
         return
     end
