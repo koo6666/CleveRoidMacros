@@ -76,9 +76,9 @@ end
 -- returns: The index of the current shapeshift form / stance. 0 if in no shapeshift form / stance
 function CleveRoids.GetCurrentShapeshiftIndex()
     if CleveRoids.playerClass == "PRIEST" then
-        return CleveRoids.ValidatePlayerBuff(CleveRoids.Localized.Spells["Shadow Form"]) and 1 or 0
+        return CleveRoids.ValidateUnitBuff("player", CleveRoids.Localized.Spells["Shadowform"]) and 1 or 0
     elseif CleveRoids.playerClass == "ROGUE" then
-        return CleveRoids.ValidatePlayerBuff(CleveRoids.Localized.Spells["Stealth"]) and 1 or 0
+        return CleveRoids.ValidateUnitBuff("player", CleveRoids.Localized.Spells["Stealth"]) and 1 or 0
     end
     for i=1, GetNumShapeshiftForms() do
         _, _, active = GetShapeshiftFormInfo(i)
@@ -601,15 +601,15 @@ CleveRoids.Keywords = {
 
     stealth = function(conditionals)
         return (
-            (CleveRoids.playerClass == "ROGUE" and CleveRoids.ValidatePlayerBuff(CleveRoids.Localized.Spells["Stealth"]))
-            or (CleveRoids.playerClass == "DRUID" and CleveRoids.ValidatePlayerBuff(CleveRoids.Localized.Spells["Prowl"]))
+            (CleveRoids.playerClass == "ROGUE" and CleveRoids.ValidateUnitBuff("player", CleveRoids.Localized.Spells["Stealth"]))
+            or (CleveRoids.playerClass == "DRUID" and CleveRoids.ValidateUnitBuff("player", CleveRoids.Localized.Spells["Prowl"]))
         )
     end,
 
     nostealth = function(conditionals)
         return (
-            (CleveRoids.playerClass == "ROGUE" and not CleveRoids.ValidatePlayerBuff(CleveRoids.Localized.Spells["Stealth"]))
-            or (CleveRoids.playerClass == "DRUID" and not CleveRoids.ValidatePlayerBuff(CleveRoids.Localized.Spells["Prowl"]))
+            (CleveRoids.playerClass == "ROGUE" and not CleveRoids.ValidateUnitBuff("player", CleveRoids.Localized.Spells["Stealth"]))
+            or (CleveRoids.playerClass == "DRUID" and not CleveRoids.ValidateUnitBuff("player", CleveRoids.Localized.Spells["Prowl"]))
         )
     end,
 
