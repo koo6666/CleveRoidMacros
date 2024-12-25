@@ -716,7 +716,7 @@ function CleveRoids.DoWithConditionals(msg, hook, fixEmptyTargetFunc, targetBefo
                 pcall(CastSpellByName, msg)
                 SetCVar("AutoSelfCast", cvar_selfcast)
             else
-                CastSpellByName(spell)
+                CastSpellByName(msg)
             end
 
             -- set spell target to unitstring (or selfcast)
@@ -765,6 +765,11 @@ function CleveRoids.DoTarget(msg)
     end
 
     for k, v in pairs(CleveRoids.splitStringIgnoringQuotes(msg)) do
+        local _, cPos, anyCond = string.find(v, "(%[.*%])")
+        local _, _, atTarget = string.find(v, "%s*@([^%s]+)%s*$", (cPos and cPos+1 or 1))
+        if atTarget and not anyCond then
+            v = "[@"..atTarget.."] "..v
+        end
         if CleveRoids.DoWithConditionals(v, CleveRoids.Hooks.TARGET_SlashCmd, CleveRoids.FixEmptyTargetSetTarget, false, action) then
             handled = true
             break
