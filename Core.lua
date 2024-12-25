@@ -680,7 +680,6 @@ function CleveRoids.DoWithConditionals(msg, hook, fixEmptyTargetFunc, targetBefo
         end
     end
 
-
     if conditionals.target ~= nil and targetBeforeAction and not (CleveRoids.hasSuperwow and action == CastSpellByName) then
         if not UnitIsUnit("target", conditionals.target) then
             needRetarget = true
@@ -711,9 +710,12 @@ function CleveRoids.DoWithConditionals(msg, hook, fixEmptyTargetFunc, targetBefo
         if CleveRoids.hasSuperwow and action == CastSpellByName and conditionals.target then
             -- from pfUI pfcast in order to support HealComm getting the proper target
             local cvar_selfcast = GetCVar("AutoSelfCast")
-
-            if cvar_selfcast ~= "0" then
+            if cvar_selfcast ~= "0" and not conditionals.asc then
                 SetCVar("AutoSelfCast", "0")
+                pcall(CastSpellByName, msg)
+                SetCVar("AutoSelfCast", cvar_selfcast)
+            elseif cvar_selfcast == "0" and conditionals.asc then
+                SetCVar("AutoSelfCast", "1")
                 pcall(CastSpellByName, msg)
                 SetCVar("AutoSelfCast", cvar_selfcast)
             else
