@@ -487,7 +487,6 @@ function CleveRoids.ParseMsg(msg)
                         arg = string.gsub(arg, '"', "")
                         arg = string.gsub(arg, "_", " ")
                         arg = string.gsub(arg, "^#(%d+)$", "=#%1")
-                        arg = string.gsub(arg, "^(%d+)$", "=%1")
                         arg = string.gsub(arg, "([^>~=<]+)#(%d+)", "%1=#%2")
 
                         -- Get comparitive args

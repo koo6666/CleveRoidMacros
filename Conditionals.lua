@@ -76,9 +76,9 @@ end
 -- returns: The index of the current shapeshift form / stance. 0 if in no shapeshift form / stance
 function CleveRoids.GetCurrentShapeshiftIndex()
     if CleveRoids.playerClass == "PRIEST" then
-        return CleveRoids.ValidateUnitBuff("player", CleveRoids.Localized.Spells["Shadowform"]) and 1 or 0
+        return CleveRoids.ValidatePlayerBuff(CleveRoids.Localized.Spells["Shadowform"]) and 1 or 0
     elseif CleveRoids.playerClass == "ROGUE" then
-        return CleveRoids.ValidateUnitBuff("player", CleveRoids.Localized.Spells["Stealth"]) and 1 or 0
+        return CleveRoids.ValidatePlayerBuff(CleveRoids.Localized.Spells["Stealth"]) and 1 or 0
     end
     for i=1, GetNumShapeshiftForms() do
         _, _, active = GetShapeshiftFormInfo(i)
@@ -374,14 +374,13 @@ function CleveRoids.GetPlayerAura(index, isbuff)
     local bid = GetPlayerBuff(index, buffType)
     if bid < 0 then return end
 
-    local spellID = GetPlayerBuffID(bid)
-    if not spellID then return end
+    local spellID = CleveRoids.hasSuperwow and GetPlayerBuffID(bid)
 
     return GetPlayerBuffTexture(bid), GetPlayerBuffApplications(bid), spellID, GetPlayerBuffTimeLeft(bid)
 end
 
 function CleveRoids.ValidateAura(unit, args, isbuff)
-    if not CleveRoids.hasSuperwow or not args or not UnitExists(unit) then return false end
+    if not args or not UnitExists(unit) then return false end
 
     if type(args) ~= "table" then
         args = {name = args}
@@ -389,21 +388,24 @@ function CleveRoids.ValidateAura(unit, args, isbuff)
 
     local isPlayer = (unit == "player")
     local found = false
-    local _, stacks, spellID, remaining
+    local texture, stacks, spellID, remaining
     local i = isPlayer and 0 or 1
 
     while true do
         if isPlayer then
-            _, stacks, spellID, remaining = CleveRoids.GetPlayerAura(i, isbuff)
+            texture, stacks, spellID, remaining = CleveRoids.GetPlayerAura(i, isbuff)
         else
             if isbuff then
-                _, stacks, spellID = UnitBuff(unit, i)
+                texture, stacks, spellID = UnitBuff(unit, i)
             else
-                _, stacks, _, spellID = UnitDebuff(unit, i)
+                texture, stacks, _, spellID = UnitDebuff(unit, i)
             end
         end
-        if not spellID then break end
-        if args.name == SpellInfo(spellID) then
+
+        if (CleveRoids.hasSuperwow and not spellID) or not texture then break end
+        if (CleveRoids.hasSuperwow and args.name == SpellInfo(spellID))
+            or (not CleveRoids.hasSuperwow and texture == CleveRoids.auraTextures[args.name])
+        then
             found = true
             break
         end
@@ -601,15 +603,15 @@ CleveRoids.Keywords = {
 
     stealth = function(conditionals)
         return (
-            (CleveRoids.playerClass == "ROGUE" and CleveRoids.ValidateUnitBuff("player", CleveRoids.Localized.Spells["Stealth"]))
-            or (CleveRoids.playerClass == "DRUID" and CleveRoids.ValidateUnitBuff("player", CleveRoids.Localized.Spells["Prowl"]))
+            (CleveRoids.playerClass == "ROGUE" and CleveRoids.ValidatePlayerBuff(CleveRoids.Localized.Spells["Stealth"]))
+            or (CleveRoids.playerClass == "DRUID" and CleveRoids.ValidatePlayerBuff(CleveRoids.Localized.Spells["Prowl"]))
         )
     end,
 
     nostealth = function(conditionals)
         return (
-            (CleveRoids.playerClass == "ROGUE" and not CleveRoids.ValidateUnitBuff("player", CleveRoids.Localized.Spells["Stealth"]))
-            or (CleveRoids.playerClass == "DRUID" and not CleveRoids.ValidateUnitBuff("player", CleveRoids.Localized.Spells["Prowl"]))
+            (CleveRoids.playerClass == "ROGUE" and not CleveRoids.ValidatePlayerBuff(CleveRoids.Localized.Spells["Stealth"]))
+            or (CleveRoids.playerClass == "DRUID" and not CleveRoids.ValidatePlayerBuff(CleveRoids.Localized.Spells["Prowl"]))
         )
     end,
 

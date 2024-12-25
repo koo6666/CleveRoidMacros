@@ -52,7 +52,7 @@ Both [SuperWoW](https://github.com/balakethelock/SuperWoW) and [Nampower](https:
 * Added `alive` conditional
 * Added `member` conditional
 * Added `form` conditional (an alias of stance)
-* Added Priest Shadow Form to `stance`/`form` conditionals.  Use `[stance:1]` or `[form:1]`
+* Added Priest Shadowform to `stance`/`form` conditionals.  Use `[stance:1]` or `[form:1]`
 * Added Rogue Stealth to `stance`/`form` conditionals.  Use `[stance:1]` or `[form:1]`
 * Added `combo` conditional
 * Added `known` conditional
@@ -139,20 +139,22 @@ Both [SuperWoW](https://github.com/balakethelock/SuperWoW) and [Nampower](https:
 
 # Usage
 ## Slash Commands
-| Command               | Purpose |
-|-----------------------|---------|
-| /retarget             | Clears your target if it doesn't exist, has 0 hp or if you can't attack it and then targets the nearest enemy. |
-| /startattack          | Starts auto-attacking. |
-| /stopattack           | Stops auto-attacking. |
-| /stopcasting          | Stops casting. |
-| /petattack            | Starts your pet's auto-attack. |
-| /castsequence         | Performs a cast sequence.  See [below](#cast-sequence) for more infomation. |
-| /equip                | Equips an item by name or itemid. |
-| /equipmh              | Equips an item by name or itemid into your mainhand slot. |
-| /equipoh              | Equips an item by name or itemid into your offhand slot. |
-| /unshift              | Cancels your current shapeshift form. |
-| /cancelaura, /unbuff  | Cancels a valid buff/aura. |
-| /runmacro             | Runs a macro.  Use /runmacro {macroname}
+| Command               | Conditionals Supported | Purpose |
+|-----------------------|          :-:           |---------|
+| /retarget             |   | Clears your target if it doesn't exist, has 0 hp or if you can't attack it and then targets the nearest enemy. |
+| /startattack          |   | Starts auto-attacking. |
+| /stopattack           |   | Stops auto-attacking. |
+| /stopcasting          |   | Stops casting. |
+| /petattack            | * | Starts your pet's auto-attack. |
+| /castsequence         | * | Performs a cast sequence.  See [below](#cast-sequence) for more infomation. |
+| /equip                | * | Equips an item by name or itemid. |
+| /equipmh              | * | Equips an item by name or itemid into your mainhand slot. |
+| /equipoh              | * | Equips an item by name or itemid into your offhand slot. |
+| /unshift              | * | Cancels your current shapeshift form. |
+| /cancelaura, /unbuff  |   | Cancels a valid buff/aura. |
+| /runmacro             |   | Runs a macro.  Use /runmacro {macroname} |
+| /use                  | * | Uses an item by name or id |
+| /cast                 | * | Casts a spell by name      |
 
 
 ## Cast Sequence
@@ -227,8 +229,8 @@ Both [SuperWoW](https://github.com/balakethelock/SuperWoW) and [Nampower](https:
 | myhp           | [myhp:<=X]<br/>[myhp:~=Y] |  |  | If the player health is >= or <= than Y percent. |
 | mypower        | [mypower:=X]<br/>[mypower:>=Y] |  |  | If the player has power (mana/rage/energy) >= or <= than Y percent. |
 | myrawpower     | [myrawpower:>X]<br/>[myrawpower:<=X] |  |  | If the player has power (mana/rage/energy) >= or <= than Y. |
-| reactive       | [reactive:"Spell Name"] | * |  | If the player has a reactive ability (Revenge, Overpower, Riposte, etc.) available to use.<br/><br/>**NOTE: Currently requires the reactive ability to be somewhere on your actionbars in addition to any macros you're using it in.** |
-| stance         | [stance:0/1/2/3/4/5] | * |  | If the player is in stance #.<br/>Supports Shadow Form as stance 1.|
+| reactive       | [reactive]<br/>[reactive:Overpower] | * |  | If the player has the reactive ability (Revenge, Overpower, Riposte, etc.) available to use.<br/><br/>**NOTE: Currently requires the reactive ability to be somewhere on your actionbars in addition to any macros you're using it in.** |
+| stance         | [stance:0/1/2/3/4/5] | * |  | If the player is in stance #.<br/>Supports Shadowform as stance 1.|
 | stealth        | [stealth] |  | * | If the player is in Stealth. |
 | zone           | [zone:"Zone Name"/"Other Zone Name"] | * | * | If the player is in one or more zones of the given name. |
 

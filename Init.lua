@@ -91,6 +91,12 @@ CleveRoids.spamConditions = {
     [CleveRoids.Localized.Shoot]    = "checkchanneled",
 }
 
+CleveRoids.auraTextures = {
+    [CleveRoids.Localized.Spells["Stealth"]]    = "Interface\\Icons\\Ability_Stealth",
+    [CleveRoids.Localized.Spells["Prowl"]]      = "Interface\\Icons\\Ability_Ambush",
+    [CleveRoids.Localized.Spells["Shadowform"]] = "Interface\\Icons\\Spell_Shadow_Shadowform",
+}
+
 
 -- I need to make a 2h modifier
 -- Maps easy to use weapon type names (e.g. Axes, Shields) to their inventory slot name and their localized tooltip name
