@@ -486,8 +486,9 @@ function CleveRoids.ParseMsg(msg)
                         -- Remove quotes around conditional args and replace any _ with spaces, put the = operator back in if shorthand was used
                         arg = string.gsub(arg, '"', "")
                         arg = string.gsub(arg, "_", " ")
-                        arg = string.gsub(arg, "[^>~=<]+#(%d+)", "=#%1")
-
+                        arg = string.gsub(arg, "^#(%d+)$", "=#%1")
+                        arg = string.gsub(arg, "^(%d+)$", "=%1")
+                        arg = string.gsub(arg, "([^>~=<]+)#(%d+)", "%1=#%2")
 
                         -- Get comparitive args
                         local _, _, name, operator, amount = string.find(arg, "([^>~=<]*)([>~=<]+)(#?%d+)")
