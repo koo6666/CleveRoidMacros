@@ -707,7 +707,7 @@ function CleveRoids.DoWithConditionals(msg, hook, fixEmptyTargetFunc, targetBefo
         if CleveRoids.hasSuperwow and action == CastSpellByName and conditionals.target then
             -- from pfUI pfcast in order to support HealComm getting the proper target
             local cvar_selfcast = GetCVar("AutoSelfCast")
-            if cvar_selfcast ~= "0" and not conditionals.asc then
+            if cvar_selfcast ~= "0" then
                 SetCVar("AutoSelfCast", "0")
                 pcall(CastSpellByName, msg, conditionals.target)
                 SetCVar("AutoSelfCast", cvar_selfcast)
