@@ -208,7 +208,7 @@ function CleveRoids.FixEmptyTarget(conditionals)
     if not conditionals.target then
         if UnitExists("target") then
             conditionals.target = "target"
-        elseif GetCVar("autoSelfCast") == "1" then
+        elseif GetCVar("autoSelfCast") == "1" or conditionals.asc then
             conditionals.target = "player"
         end
     end
@@ -639,7 +639,7 @@ function CleveRoids.DoWithConditionals(msg, hook, fixEmptyTargetFunc, targetBefo
         if not UnitExists("mouseover") then
             conditionals.target = CleveRoids.mouseoverUnit
         end
-        if not conditionals.target or (conditionals.target ~= "focus" and not UnitExists(conditionals.target)) then
+        if not conditionals.asc and (not conditionals.target or (conditionals.target ~= "focus" and not UnitExists(conditionals.target))) then
             conditionals.target = origTarget
             return false
         end
@@ -711,16 +711,21 @@ function CleveRoids.DoWithConditionals(msg, hook, fixEmptyTargetFunc, targetBefo
                 SetCVar("AutoSelfCast", "0")
                 pcall(CastSpellByName, msg, conditionals.target)
                 SetCVar("AutoSelfCast", cvar_selfcast)
-            elseif cvar_selfcast == "0" and conditionals.asc then
-                SetCVar("AutoSelfCast", "1")
-                pcall(CastSpellByName, msg, conditionals.target)
-                SetCVar("AutoSelfCast", cvar_selfcast)
             else
-                CastSpellByName(msg)
+                CastSpellByName(msg, conditionals.target)
             end
 
             -- set spell target to unitstring (or selfcast)
-            if SpellIsTargeting() then SpellTargetUnit(conditionals.target) end
+            if SpellIsTargeting() then
+                if conditionals.asc then
+                    SpellStopTargeting()
+                    SetCVar("AutoSelfCast", "1")
+                    pcall(CastSpellByName, msg, conditionals.target)
+                    SpellTargetUnit(conditionals.target)
+                    SetCVar("AutoSelfCast", cvar_selfcast)
+                end
+                SpellTargetUnit(conditionals.target)
+            end
 
             -- clean up spell target in error case
             if SpellIsTargeting() then SpellStopTargeting() end
