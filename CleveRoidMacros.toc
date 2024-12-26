@@ -4,9 +4,8 @@
 ## Notes: Vanilla macros on steroids!
 ## Title-deDE: |cFF4477FFCleveR|r|cFFFFFFFFoid - Weird|r|cFF4477FFer|r|cFFFFFFFF Vibes|r
 ## Notes-deDE: Vanilla Macros auf Steroide!
-## Version: 1.08
+## Version: 1.09
 ## OptionalDeps: ClassicFocus, FocusFrame, pfUI, SuperMacro, Bongos_ActionBar
-Widgets.xml
 Localization.lua
 Init.lua
 Utility.lua
