@@ -496,7 +496,8 @@ function CleveRoids.ParseMsg(msg)
                         else
                             local amount, checkStacks = string.gsub(amount, "#", "")
                             table.insert(conditionals[condition], {
-                                name = (name and name ~= "") and name or conditionals.action,
+                                -- TODO: localize rank pattern?
+                                name = (name and name ~= "") and name or string.gsub(conditionals.action, "%(Rank %d+%)", ""),
                                 operator = operator,
                                 amount = tonumber(amount),
                                 checkStacks = (checkStacks == 1)
@@ -572,7 +573,7 @@ function CleveRoids.TestAction(cmd, args)
 
     if conditionals.target == "mouseover" then
         if not UnitExists("mouseover") then
-            conditionals.target = CleveRoids.mouseoverUnit or "mouseover"
+            conditionals.target = CleveRoids.mouseoverUnit
         end
         if not conditionals.target or (conditionals.target ~= "focus" and not UnitExists(conditionals.target)) then
             conditionals.target = origTarget
@@ -636,7 +637,7 @@ function CleveRoids.DoWithConditionals(msg, hook, fixEmptyTargetFunc, targetBefo
     local origTarget = conditionals.target
     if conditionals.target == "mouseover" then
         if not UnitExists("mouseover") then
-            conditionals.target = CleveRoids.mouseoverUnit or "mouseover"
+            conditionals.target = CleveRoids.mouseoverUnit
         end
         if not conditionals.target or (conditionals.target ~= "focus" and not UnitExists(conditionals.target)) then
             conditionals.target = origTarget
@@ -644,14 +645,13 @@ function CleveRoids.DoWithConditionals(msg, hook, fixEmptyTargetFunc, targetBefo
         end
     end
 
-    local needRetarget = false;
+    local needRetarget = false
     if fixEmptyTargetFunc then
         needRetarget = fixEmptyTargetFunc(conditionals, msg, hook)
     end
 
     CleveRoids.SetHelp(conditionals)
 
-    local needRetarget = false
     if conditionals.target == "focus" then
         if UnitExists("target") and UnitName("target") == CleveRoids.GetFocusName() then
             conditionals.target = "target"
@@ -696,8 +696,6 @@ function CleveRoids.DoWithConditionals(msg, hook, fixEmptyTargetFunc, targetBefo
         end
     end
 
-    CleveRoids.castTarget = conditionals.target
-
     local result = true
     if string.sub(msg, 1, 1) == "{" and string.sub(msg, -1) == "}" then
         if string.sub(msg, 2, 2) == "\"" and string.sub(msg, -2,-2) == "\"" then
@@ -711,11 +709,11 @@ function CleveRoids.DoWithConditionals(msg, hook, fixEmptyTargetFunc, targetBefo
             local cvar_selfcast = GetCVar("AutoSelfCast")
             if cvar_selfcast ~= "0" and not conditionals.asc then
                 SetCVar("AutoSelfCast", "0")
-                pcall(CastSpellByName, msg)
+                pcall(CastSpellByName, msg, conditionals.target)
                 SetCVar("AutoSelfCast", cvar_selfcast)
             elseif cvar_selfcast == "0" and conditionals.asc then
                 SetCVar("AutoSelfCast", "1")
-                pcall(CastSpellByName, msg)
+                pcall(CastSpellByName, msg, conditionals.target)
                 SetCVar("AutoSelfCast", cvar_selfcast)
             else
                 CastSpellByName(msg)
@@ -770,7 +768,7 @@ function CleveRoids.DoTarget(msg)
         end
     end
 
-    for k, v in pairs(CleveRoids.splitStringIgnoringQuotes(msg)) do
+    for k, v in CleveRoids.splitStringIgnoringQuotes(msg) do
         local _, cPos, anyCond = string.find(v, "(%[.*%])")
         local _, _, atTarget = string.find(v, "%s*@([^%s]+)%s*$", (cPos and cPos+1 or 1))
         if atTarget then handled = true end
