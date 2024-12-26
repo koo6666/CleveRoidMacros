@@ -102,7 +102,7 @@ function CleveRoids.splitStringIgnoringQuotes(str, separator)
             temp = temp .. char
         elseif char == separators[char] and not insideQuotes then
             temp = CleveRoids.Trim(temp)
-            table.insert(result, temp)
+            if temp ~= "" then table.insert(result, temp) end
             temp = ""
         else
             temp = temp .. char

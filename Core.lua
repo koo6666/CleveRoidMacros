@@ -454,7 +454,7 @@ function CleveRoids.ParseMsg(msg)
     end
 
     -- Set the action's target to @unitid if found
-    local _, _, target = string.find(conditionBlock, "(@[^%s]+)")
+    local _, _, target = string.find(conditionBlock, "(@[^%s,]+)")
     if target then
         conditionBlock = CleveRoids.Trim(string.gsub(conditionBlock, target, ""))
         conditionals.target = string.sub(target, 2)
