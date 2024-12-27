@@ -710,19 +710,21 @@ function CleveRoids.DoWithConditionals(msg, hook, fixEmptyTargetFunc, targetBefo
             local cvar_selfcast = GetCVar("AutoSelfCast")
             if cvar_selfcast ~= "0" then
                 SetCVar("AutoSelfCast", "0")
-                pcall(CastSpellByName, msg, conditionals.target)
+                pcall(CastSpellByName, msg)
                 SetCVar("AutoSelfCast", cvar_selfcast)
             else
-                CastSpellByName(msg, conditionals.target)
+                CastSpellByName(msg)
             end
 
             -- set spell target to unitstring (or selfcast)
+            if SpellIsTargeting() then SpellTargetUnit(conditionals.target) end
+
             if SpellIsTargeting() then
                 if conditionals.asc then
                     SpellStopTargeting()
                     SetCVar("AutoSelfCast", "1")
-                    pcall(CastSpellByName, msg, conditionals.target)
-                    SpellTargetUnit(conditionals.target)
+                    pcall(CastSpellByName, msg)
+                    SpellTargetUnit("player")
                     SetCVar("AutoSelfCast", cvar_selfcast)
                 end
                 SpellTargetUnit(conditionals.target)
