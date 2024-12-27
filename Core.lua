@@ -438,6 +438,7 @@ function CleveRoids.ParseMsg(msg)
 
     -- Store the action along with the conditionals incase it's needed
     conditionals.action = action
+    action = string.gsub(action, "%(Rank %d+%)", "")
 
     if noSpam and noSpam ~= "" then
         local spamCond = CleveRoids.GetSpammableConditional(action)
@@ -450,7 +451,7 @@ function CleveRoids.ParseMsg(msg)
     end
 
     if not conditionBlock then
-        return action, conditionals
+        return conditionals.action, conditionals
     end
 
     -- Set the action's target to @unitid if found
@@ -474,7 +475,7 @@ function CleveRoids.ParseMsg(msg)
                         conditionals[condition] = { conditionals[condition] }
                         table.insert(conditionals[condition], action)
                     else
-                        conditionals[condition] = conditionals.action
+                        conditionals[condition] = action
                     end
                 else
                     if not conditionals[condition] then
@@ -497,7 +498,7 @@ function CleveRoids.ParseMsg(msg)
                             local amount, checkStacks = string.gsub(amount, "#", "")
                             table.insert(conditionals[condition], {
                                 -- TODO: localize rank pattern?
-                                name = (name and name ~= "") and name or string.gsub(conditionals.action, "%(Rank %d+%)", ""),
+                                name = (name and name ~= "") and name or action,
                                 operator = operator,
                                 amount = tonumber(amount),
                                 checkStacks = (checkStacks == 1)
@@ -507,7 +508,7 @@ function CleveRoids.ParseMsg(msg)
                 end
             end
         end
-        return action, conditionals
+        return conditionals.action, conditionals
     end
 end
 
