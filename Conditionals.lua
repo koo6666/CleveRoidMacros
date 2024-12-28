@@ -439,17 +439,18 @@ end
 
 -- TODO: Look into https://github.com/Stanzilla/WoWUIBugs/issues/47 if needed
 function CleveRoids.GetCooldown(name, ignoreGCD)
-    if CleveRoids.Cooldowns[name] then
-        if CleveRoids.Cooldowns[name] > GetTime() then
-            return CleveRoids.Cooldowns[name]
-        else
-            CleveRoids.Cooldowns[name] = nil
-        end
-    end
+    -- TODO: temporarily disabled caching for https://github.com/bhhandley/CleveRoidMacros/issues/3
+    -- if CleveRoids.Cooldowns[name] then
+    --     if CleveRoids.Cooldowns[name] > GetTime() then
+    --         return CleveRoids.Cooldowns[name]
+    --     else
+    --         CleveRoids.Cooldowns[name] = nil
+    --     end
+    -- end
 
     local expires = CleveRoids.GetSpellCooldown(name, ignoreGCD) or CleveRoids.GetItemCooldown(name, ignoreGCD)
     if expires > GetTime() then
-        CleveRoids.Cooldowns[name] = expires
+        -- CleveRoids.Cooldowns[name] = expires
         return expires
     end
 
