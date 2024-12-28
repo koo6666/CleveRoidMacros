@@ -30,17 +30,23 @@ function CleveRoids.TestForActiveAction(actions)
     if not actions then return end
 
     local hasActive = false
-    for _, action in actions.list do
-        -- break on first action that passes tests
-        if CleveRoids.TestAction(action.cmd, action.args) then
-            hasActive = true
-            if action.sequence then
-                actions.sequence = action.sequence
-                actions.active = CleveRoids.GetCurrentSequenceAction(actions.sequence)
-            else
-                actions.active = action
+    if actions.tooltip and table.getn(actions.list) == 0 then
+        CleveRoids.TestAction(actions.cmd, actions.args)
+        hasActive = true
+        actions.active = actions.tooltip
+    else
+        for _, action in actions.list do
+            -- break on first action that passes tests
+            if CleveRoids.TestAction(action.cmd, action.args) then
+                hasActive = true
+                if action.sequence then
+                    actions.sequence = action.sequence
+                    actions.active = CleveRoids.GetCurrentSequenceAction(actions.sequence)
+                else
+                    actions.active = action
+                end
+                break
             end
-            break
         end
     end
 
@@ -383,6 +389,9 @@ function CleveRoids.ParseMacro(name)
 
     -- build a list of testable actions for the macro
     for i, line in CleveRoids.splitString(body, "\n") do
+        line = CleveRoids.Trim(line)
+        local cmd, args = CleveRoids.SplitCommandAndArgs(line)
+
         -- check for #showtooltip
         if i == 1 then
             local _, _, st, _, tt = string.find(line, "(#showtooltip)(%s?(.*))")
@@ -396,12 +405,11 @@ function CleveRoids.ParseMacro(name)
             -- #showtooltip and item/spell/macro specified, only use this tooltip
             if st and tt ~= "" then
                 macro.actions.tooltip = CleveRoids.CreateActionInfo(tt)
+                macro.actions.cmd = cmd
+                macro.actions.args = tt
                 break
             end
         else
-            line = CleveRoids.Trim(line)
-            local cmd, args = CleveRoids.SplitCommandAndArgs(line)
-
             -- make sure we have a testable action
             if line ~= "" and args ~= "" and CleveRoids.dynamicCmds[cmd] then
                 for _, arg in CleveRoids.splitStringIgnoringQuotes(args) do
