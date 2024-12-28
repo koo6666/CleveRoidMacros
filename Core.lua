@@ -208,7 +208,7 @@ function CleveRoids.FixEmptyTarget(conditionals)
     if not conditionals.target then
         if UnitExists("target") then
             conditionals.target = "target"
-        elseif GetCVar("autoSelfCast") == "1" or conditionals.asc then
+        elseif GetCVar("autoSelfCast") == "1" then
             conditionals.target = "player"
         end
     end
@@ -640,7 +640,7 @@ function CleveRoids.DoWithConditionals(msg, hook, fixEmptyTargetFunc, targetBefo
         if not UnitExists("mouseover") then
             conditionals.target = CleveRoids.mouseoverUnit
         end
-        if not conditionals.asc and (not conditionals.target or (conditionals.target ~= "focus" and not UnitExists(conditionals.target))) then
+        if not conditionals.target or (conditionals.target ~= "focus" and not UnitExists(conditionals.target)) then
             conditionals.target = origTarget
             return false
         end
@@ -706,33 +706,9 @@ function CleveRoids.DoWithConditionals(msg, hook, fixEmptyTargetFunc, targetBefo
         end
     else
         if CleveRoids.hasSuperwow and action == CastSpellByName and conditionals.target then
-            -- from pfUI pfcast in order to support HealComm getting the proper target
-            local cvar_selfcast = GetCVar("AutoSelfCast")
-            if cvar_selfcast ~= "0" then
-                SetCVar("AutoSelfCast", "0")
-                pcall(CastSpellByName, msg)
-                SetCVar("AutoSelfCast", cvar_selfcast)
-            else
-                CastSpellByName(msg)
-            end
-
-            -- set spell target to unitstring (or selfcast)
-            if SpellIsTargeting() then SpellTargetUnit(conditionals.target) end
-
-            if SpellIsTargeting() then
-                if conditionals.asc then
-                    SpellStopTargeting()
-                    SetCVar("AutoSelfCast", "1")
-                    pcall(CastSpellByName, msg)
-                    SpellTargetUnit("player")
-                    SetCVar("AutoSelfCast", cvar_selfcast)
-                end
-                SpellTargetUnit(conditionals.target)
-            end
-
-            -- clean up spell target in error case
-            if SpellIsTargeting() then SpellStopTargeting() end
+            CastSpellByName(msg, conditionals.target)
         else
+            print(msg, conditionals.target)
             action(msg)
         end
     end

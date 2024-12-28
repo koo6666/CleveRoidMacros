@@ -61,7 +61,6 @@ CleveRoids.ignoreKeywords = {
     action        = true,
     ignoretooltip = true,
     cancelaura    = true,
-    asc           = true,
 }
 
 -- TODO: Localize?
