@@ -907,15 +907,11 @@ CleveRoids.Keywords = {
     end,
 
     isplayer = function(conditionals)
-        return And(conditionals.isplayer, function (unit)
-            return UnitIsPlayer(unit)
-        end)
+        return UnitIsPlayer(conditionals.target)
     end,
 
     isnpc = function(conditionals)
-        return And(conditionals.isnpc, function (units)
-            return not UnitIsPlayer(unit)
-        end)
+        return not UnitIsPlayer(conditionals.target)
     end,
 
     inrange = function(conditionals)
