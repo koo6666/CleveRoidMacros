@@ -66,21 +66,19 @@ Both [SuperWoW](https://github.com/balakethelock/SuperWoW) and [Nampower](https:
 * Added /retarget command. Clears your target if it doesn't exist, has 0 hp or if you can't attack it and then targets the nearest enemy
 * Added /equipmh command. Equips the weapon into your mainhand slot. 
 * Added ? flag to prevent an action from affecting the icon/tooltips.  It must be the first character. 
-* Updated ! flag as a way to easily make spammable abilities.  For non-auto repeating abilities, it's really just a shortcut for `nomybuff`
-* Added ~ flag to either cast or cancel the buff/aura if possible
-* Tested with vanilla, ShaguTweaks, pfUI and Bongos
-
     ```lua
     #showtooltip
     /use ?Some Item
     /cast [reactive] Overpower; Heroic Strike
     ```
+* Updated ! flag as a shortcut easily make spammable spells.
+* Added ~ flag to either cast or cancel the buff/aura if possible.  (Toggles the spell on/off)
 
 
 ## Dynamic Icons and Tooltips
 * The icon and tooltip for a macro will automatically update to the first true condition's action.  Left to right, top to bottom.
 * Consumables and certain other item types will now show a count on the action bar.
-* Spells with reagent costs will now show a count.
+* Spells with reagent costs will now show a count of how many uses you have.
 * Full `#showtooltip` support with dynamic icons and tooltips
   * A macro must start with `#showtooltip` or `#showtooltip spell/item/itemid`. The icons and tooltips will update on your bars as the conditions are met.
 
@@ -90,8 +88,8 @@ Both [SuperWoW](https://github.com/balakethelock/SuperWoW) and [Nampower](https:
     ```
     ```lua
     #showtooltip
-    /cast [stance:1/3, nocooldown:"Mocking Blow", notargeting:player] Mocking Blow
-    /cast [stance:2/3, nocooldown:Taunt, notargeting:player] Taunt
+    /cast [stance:1/3, nocooldown, notargeting:player] Mocking Blow
+    /cast [stance:2/3, nocooldown, notargeting:player] Taunt
     /cast Shield Slam
     ```
     
@@ -177,62 +175,86 @@ Both [SuperWoW](https://github.com/balakethelock/SuperWoW) and [Nampower](https:
 
 
 ## Conditionals
+* Conditionals are basically if/then/else statements which are evaluated left to right, top to bottom.  
+* The first set of conditions that are all true will be the action that happens so the order you put things in is very important.
 * Multiple conditionals can be used, separated with a space or comma.  
-* Spells and items with spaces in the name need to use underscores (`_`) instead of spaces or be enclosed in quotations.  
+* Spells and items with spaces in the name need to use underscores (`_`) instead of spaces or be enclosed in quotations.
+* Each action can be written on one line or on separate.  Both are effectively the same however WoW executes every line of a macro so it is technically better to use one line where possible.  I usually prefer separate lines because it's easier to read and troubleshoot at a quick glance.  You do you.
+  
+  **Separate Lines:**
   ```
   #showtooltip
   /use [@mouseover alive help hp:<70 nodebuff:"Recently Bandaged"] Runecloth Bandage
-  /use [@target alive help hp:<70 nodebuff:"Recently Bandaged"] Runecloth Bandage
+  /use [@target, alive, help, hp:<70, nodebuff:Recently_Bandaged] Runecloth Bandage
   /use [@player] Runecloth Bandage
   ```
-* If a conditional is marked as Multi you can provide multiple values in the same condition.  
+  **One Line:**
+  ```
+  #showtooltip
+  /use [@mouseover alive help hp:<70 nodebuff:"Recently Bandaged"] Runecloth Bandage; [@target, alive, help, hp:<70, nodebuff:Recently_Bandaged] Runecloth Bandage; [@player] Runecloth Bandage
+  ```
+  **Note: Classic/Retail macros allow for cascading conditional blocks like below.  This is NOT supported however a future update will add support for it.**  
+  ```
+  #showtooltip
+  /use [@mouseover alive help hp:<70][@target alive help hp:<70][@player][] Runecloth Bandage
+  ```
+
+* If a conditional on the table is marked as **Multi** you can provide multiple values in the same condition.  *Only one needs to be true.*  
   `[targeting:party1/party2/party3/party4]` -- targeting one of your party members  
-  `[zone:Stormwind/Ironforge]` -- in Stormwind or Ironforge  
-* If a conditional is marked as Noable you can prefix the condition with "no" to test the opposite condition.  
+  `[zone:Stormwind/Ironforge]` -- in Stormwind OR Ironforge  
+* If a conditional is marked as **Noable** you can prefix the condition with "no" to test the opposite condition.  *All need to be true*  
    `[notargeting:player]` -- not targeting the player  
-   `[nozone:Stormwind/Ironforge]` -- not in Stormwind or Ironforge  
+   `[nozone:Stormwind/Ironforge]` -- not in Stormwind AND not in Ironforge  
 * You can specifiy a target unit for the macro by adding in a valid @unitid  
    `/cast [@party1 combat] Intervene`  -- casts Intervene on party member 1 if you (player) are in combat  
 * @focus / focus can be used as an @unitid / conditional unitid however Vanilla does not support focus targets, a compatible addon is required to make this function.
-* If the conditional allows for a numerical comparison, the format is `condition:>X` or `condition:>#X` depending if you are comparing time or "stacks".  For things that do not have time (combo, known, hp, power, etc) the `#` is technically ignored so either syntax works.
+* If the conditional allows for a numerical comparison, the format is `condition:>X` or `condition:"Some Value">X`. If you want to compare stacks/rank (where applicable) and not remaining time, use `>#X`.  
+  * **Only the player's buffs/debufs can be checked for remaining time**  
+  * Valid operators are =, ~=, >, >=, <, <=
+* You can omit the value of a conditional if you want to check the same spell/item that you are using in the action.  
+  `[debuff:"Sunder Armor"<#5] Sunder Armor`  ==  `[debuff:<#5] Sunder Armor`  
+  `[nobuff:"Mark of the Wild"] Mark of the Wild` == `[nobuff] Mark of the Wild`
 * [SuperWoW](https://github.com/balakethelock/SuperWoW) dll mod is required for some conditionals
 * [Nampower](https://github.com/pepopo978/nampower) dll mod required for some conditionals
 
 ### Special Characters
-| Character    | Syntax        | Description |
+| Character    | Syntax Examples      | Description |
 |     :-:      |---------------|-------------|
 | !            | !Attack<br/>!Cat Form<br/>!Spell Name | Prefix on spell name.<br/>Will only use the spell if it's not already active.<br/>Can also be used with other spells as shorthand for `nomybuff`   |
-| ?            | ?[equipped:Swords]</br>?Presence of Mind | Prevents the icon and tooltip from showing.<br/>Must be the first character. |
-| ~            | ~Slow Fall    | Prefix on spell name.<br/>Will cast or cancel the buff/aura if possible. |
+| ?            | /use ?[equipped:Swords]</br>/cast ?Presence of Mind | Prevents the icon and tooltip from showing.<br/>Must be the first character. |
+| ~            | ~Slow Fall    | Prefix on spell name.  Acts as a toggle ability.<br/>Will cast or cancel the buff/aura if possible. |
 
 ### Key Modifiers
-| Conditional    | Syntax        | Multi | Noable | Tests For |
+| Conditional    | Syntax Examples       | Multi | Noable | Tests For |
 |----------------|---------------|  :-:  | :-:    |-----------|
-| mod            | [mod]<br/>[mod:ctrl/alt/shift] | * | * | If one or more modifier keys are pressed. |
+| mod            | [mod]<br/>[mod:ctrl/alt/shift] | * | * | If any mod key is pressed.</br>If one of the listed modifier keys are pressed.  |
 
 
 ### Player Only
-| Conditional    | Syntax        | Multi | Noable | Tests For |
+| Conditional    | Syntax Examples       | Multi | Noable | Tests For |
 |----------------|---------------|  :-:  | :-:    |-----------|
-| cdgcd          | [cdgcd:"Spell or Item Name"]<br/>[cdgcd:"Spell or Item Name">X]<br/>[cdgcd:"Spell or Item Name"<X] | * | * | If the Spell or Item is on cooldown and optionally if the amount of time left is >= or <= than X seconds.  **GCD NOT IGNORED** |
-| checkchanneled | [checkchanneled:Spell/Attack/Shoot] |  |  | If the player is channeling the given spell, is auto attacking, auto shooting or wanding. |
+| cdgcd          | [cdgcd]<br/>[cdgcd:"Name"]<br/>[cdgcd:"Name">X] | * | * | If the Spell or Item is on cooldown and optionally if the amount of time left is >= or <= than X seconds.  **GCD NOT IGNORED** |
 | channeled      | [channeled] |  |  | If the player is currently channeling a spell. |
 | combat         | [combat] |  | * | If the player is in combat. |
 | combo          | [combo:>#3]<br/>[combo:#2]</br>[combo:<#5] |   |  * |  If the player has the specified number of combo points. |
-| cooldown       | [cooldown:"Spell Or Item Name"]<br/>[cooldown:"Spell or Item Name">X]<br/>[cooldown:"Spell or Item Name"<X] | * | * | If the Spell or Item is on cooldown and optionally if the amount of time left is >= or <= than X seconds. **GCD (if exatly 1.5 sec) IGNORED** |
-| equipped       | [equipped:"Item Name"]<br/>[equipped:Shields]<br/>[equipped:Daggers2] | * | * | If the player has an item or item type equipped.  See [below](#weapon-types) for a list of valid Weapon Types. |
-| form           | [form:0/1/2/3/4/5] | * |  | Alias of stance |
-| group          | [group]<br/>[group:party/raid] | * | * | If the player is in a group. |
-| known          | [known:"Spell"]</br>[known:"Talent>#2"] | * | * | If the player knows a spell or talent.  Can optionally check the rank. |
-| mybuff         | [mybuff:"Buff Name"]<br/>[mybuff:"Buff Name">#X]<br/>[mybuff:"Buff Name"<#X] | * |  | If the player has a buff of the given name and optionally if it has >= or <= X number of stacks. |
-| mydebuff       | [mydebuff:"Debuff Name"]<br/>[mydebuff:"Debuff Name">#X]<br/>[mydebuff:"Debuff Name">=#X] | * |  | If the player has a debuff of the given name and optionally if it has >= or <= than X number of stacks. |
-| myhp           | [myhp:<=X]<br/>[myhp:~=Y] |  |  | If the player health is >= or <= than Y percent. |
-| mypower        | [mypower:=X]<br/>[mypower:>=Y] |  |  | If the player has power (mana/rage/energy) >= or <= than Y percent. |
-| myrawpower     | [myrawpower:>X]<br/>[myrawpower:<=X] |  |  | If the player has power (mana/rage/energy) >= or <= than Y. |
-| reactive       | [reactive]<br/>[reactive:Overpower] | * |  | If the player has the reactive ability (Revenge, Overpower, Riposte, etc.) available to use.<br/><br/>**NOTE: Currently requires the reactive ability to be somewhere on your actionbars in addition to any macros you're using it in.** |
-| stance         | [stance:0/1/2/3/4/5] | * |  | If the player is in stance #.<br/>Supports Shadowform as stance 1.|
-| stealth        | [stealth] |  | * | If the player is in Stealth. |
-| zone           | [zone:"Zone Name"/"Other Zone Name"] | * | * | If the player is in one or more zones of the given name. |
+| cooldown       | [cooldown]<br/>[cooldown:"Name"]<br/>[cooldown:"Name"<X] | * | * | If the Spell or Item name is on cooldown and optionally if the amount of time left is >= or <= than X seconds. **GCD (if exatly 1.5 sec) IGNORED** |
+| equipped       | [equipped:"Name"]<br/>[equipped:Shields]<br/>[equipped:Daggers2] | * | * | If the player has an item name/id or item type equipped.  See [below](#weapon-types) for a list of valid Weapon Types. |
+| form           | [form:0/1/2/3/4/5] | * |  | Alias of `stance` |
+| group          | [group]<br/>[group:party/raid] | * | * | If the player is in any group or specific group type. |
+| known          | [known]<br/>[known:"Name"]</br>[known:"Name">#2] | * | * | If the player knows a spell or talent.  Can optionally check the rank. |
+| mybuff         | [mybuff]<br/>[mybuff:"Name"]<br/>[mybuff:"Name">#X]<br/>[mybuff:<X] | * |  | If the player has a buff of the given name.</br>Optionally compared to X number of stacks.<br/>Optionally compared to X time remaining. |
+| mydebuff       | [mydebuff]<br/>[mydebuff:"Name"]<br/>[mydebuff:"Name">#X]<br/>[mydebuff:<X] | * |  | If the player has a debuff of the given name.<br/>Optionally compared to X number of stacks.<br/>Optionally compared to X time remaining. |
+| myhp           | [myhp:<=X]<br/>[myhp:>=X/<=Y] | * |  | The player's health **PERCENT** compared to X. |
+| myhplost       | [myhplost:>=X]<br/>[myhplost:>=X/<=Y] | * |  | The player's lost health compared to X. |
+| mypower        | [mypower:>=X]<br/>[mypower:>=X/<=Y] | * |  | The player's power (mana/rage/energy) **PERCENT** compared to X. |
+| mypowerlost    | [mypowerlost:>=X]<br/>[mypowerlost:>=X/<=Y] | * |  | The player's lost power (mana/rage/energy) compared to X. |
+| myrawhp        | [myrawhp:>=X]<br/>[myrawhp:>=X/<=Y] | * |  | The player's health compared to X. |
+| myrawpower     | [myrawpower:>=X]<br/>[myrawpower:>=X/<=Y] | * |  | The player's power (mana/rage/energy) compared to X. |
+| reactive       | [reactive]<br/>[reactive:Overpower] | * |  | If the player has the reactive ability (Revenge, Overpower, Riposte, etc.) available to use.<br/><br/>**NOTE: Currently requires the reactive ability to be somewhere on your actionbars in addition to any macros you're using it in.  A planned future update will remove this requirement if using Nampower.** |
+| resting        | [resting] |  | * | If the player is resting (in an inn/capital city/etc.) |
+| stance         | [stance:0/1/2/3/4/5] | * |  | If the player is in stance #.<br/>Supports Shadowform and Stealth as stance 1.|
+| stealth        | [stealth] |  | * | If the player is in Stealth or Prowl. |
+| zone           | [zone:"Zone"]<br/>[zone:"Zone"/"Another Zone"] | * | * | If the player is in one or more zones of the given name. |
 
 
 ### Unit Based
@@ -240,23 +262,26 @@ Both [SuperWoW](https://github.com/balakethelock/SuperWoW) and [Nampower](https:
 | Conditional    | Syntax        | Multi | Noable | Tests For |
 |----------------|---------------|  :-:  | :-:    |-----------|
 | alive          | [alive]       |       |        | If the @unitid is NOT dead or a ghost. |
-| buff           | [buff:"Buff Name"]<br/>[buff:"Buff Name">#X]<br/>[buff:"Buff Name"<#X] |  | * | If the @unitid has a buff of the given name and optionally if it has >= or <= than X number of stacks. |
+| buff           | [buff]<br/>[buff:"Name"]<br/>[buff:"Name">#X]<br/>[buff:"Name"<X] |  | * | If the @unitid has a buff of the given name and optionally if it has >= or <= than X number of stacks. |
 | casting        | [casting]<br/>[casting:"Spell Name"] | * |  * |  If the @unitid is casting any or one or more specific spells. |
 | dead           | [dead]        |       |        | If the @unitid is dead or a ghost. |
-| debuff         | [debuff:"Debuff Name"]<br/>[debuff:"Debuff Name">#X]<br/>[debuff:"Debuff Name"<#X] |  | * | If the @unitid has a debuff of the given name and optionally if it has >= or <= than X number of stacks. |
+| debuff         | [debuff]<br/>[debuff:"Name"]<br/>[debuff:"Name">#X]<br/>[debuff:<X] |  | * | If the @unitid has a debuff of the given name and optionally if it has >= or <= than X number of stacks. |
 | harm           | [harm]        |       |        | If the @unitid is an enemy. |
 | help           | [help]        |       |        | If the @unitid is friendly. |
-| inrange        | [inrange]<br/>[inrange:"Spell Name"] | * | * | If the specified @unitid is in range of the spell. |
+| hp             | [hp:>=X]<br/>[hp:>=X/<=Y] |  |  | The @unitid health **PERCENT** compared to X. |
+| hplost         | [hplost:>=X]<br/>[hplost:>=X/<=Y] |  |  | The @unitid health lost compared to X. |
+| inrange        | [inrange]<br/>[inrange:"Name"] | * | * | If the specified @unitid is in range of the spell. |
+| isnpc          | [isnpc:unitid] | * |  | If the unitid is an npc.<br/>See this [article](https://wowpedia.fandom.com/wiki/UnitId) for a list of unitids.<br/>Not all units are valid in vanilla. |
+| isplayer       | [isplayer:unitid] | * |  | If the unitid is a player.<br/>See this [article](https://wowpedia.fandom.com/wiki/UnitId) for a list of unitids.<br/>Not all units are valid in vanilla. |
 | member         | [member]      |       |    *   | If the @unitid is in your party OR raid. |
 | party          | [party]       |       |    *   | If the @unitid is in your party. |
+| power          | [power:>=X]<br/>[power:>=X/<=Y] |  |  | The @unitid power (mana/rage/energy) **PERCENT** compared to X. |
+| powerlost      | [powerlost:>=X]<br/>[powerlost:>=X/<=Y] |  |  | The @unitid power (mana/rage/energy) lost compared to X. |
 | raid           | [raid]        |       |    *   | If the @unitid is in your raid.  |
-| power          | [power>X]<br/>[power<Y] |  |  | If the @unitid has power (mana/rage/energy) >= or <= than Y percent. |
-| rawpower       | [rawpower>X]<br/>[rawpower<X] |  |  | If the @unitid has power (mana/rage/energy) >= or <= than Y. |
-| hp             | [hp>X]<br/>[hp<Y] |  |  | If the @unitid health is >= or <= than Y percent. |
+| rawphp         | [rawhp:>=X]<br/>[rawhp:>=X/<=Y] |  |  | The @unitid health compared to X. |
+| rawpower       | [rawpower:>=X]<br/>[rawpower:>=X/<=Y] |  |  | The @unitid power (mana/rage/energy) compared to X. |
 | type           | [type:"Creature Type"] | * | * | If the @unitid is the specified creature type.  See [below](#creature-types) for a list of valid Creature Types. |
 | targeting      | [targeting:unitid] | * | * | If the @unitid is targeting the specified unitid.<br/>See this [article](https://wowpedia.fandom.com/wiki/UnitId) for a list of unitids.<br/>Not all units are valid in vanilla. |
-| isplayer       | [isplayer:unitid] | * |  | If the unitid is a player.<br/>See this [article](https://wowpedia.fandom.com/wiki/UnitId) for a list of unitids.<br/>Not all units are valid in vanilla. |
-| isnpc          | [isnpc:unitid] | * |  | If the unitid is an npc.<br/>See this [article](https://wowpedia.fandom.com/wiki/UnitId) for a list of unitids.<br/>Not all units are valid in vanilla. |
 
 
 ### Weapon Types
