@@ -708,7 +708,6 @@ function CleveRoids.DoWithConditionals(msg, hook, fixEmptyTargetFunc, targetBefo
         if CleveRoids.hasSuperwow and action == CastSpellByName and conditionals.target then
             CastSpellByName(msg, conditionals.target)
         else
-            print(msg, conditionals.target)
             action(msg)
         end
     end
