@@ -1,5 +1,5 @@
 # CleveRoid Macros
-This was originally an effort to bring the dynamic tooltip and cast sequence functionality of [CleverMacro](https://github.com/DanielAdolfsson/CleverMacro) into [Roid-Macros](https://github.com/MarcelineVQ/Roid-Macros).  It has since expanded after some additional changes I wanted along with feedback from others.  The majority of credit goes to the original authors.  Still a work in progress.
+This was originally an effort to bring the dynamic tooltip and cast sequence functionality of [CleverMacro](https://github.com/DanielAdolfsson/CleverMacro) into [Roid-Macros](https://github.com/MarcelineVQ/Roid-Macros).  It has since expanded after some additional changes I wanted along with feedback from others.  The majority of credit goes to the [original addon authors](#original-addons--authors).  Still a work in progress.
 
 Both [SuperWoW](https://github.com/balakethelock/SuperWoW) and [Nampower](https://github.com/pepopo978/nampower) are recommended and in some cases requred.
 
@@ -25,6 +25,7 @@ Both [SuperWoW](https://github.com/balakethelock/SuperWoW) and [Nampower](https:
 * Medium: Because this addon is constantly checking conditions for all macros on your actionbars, if you improperly create a macro, in some certain cases it can cause strange UI issues including not displaying any icons, other macros not working or lua errors.  Fix the macro or remove it from your actionbar and it should go back to normal automatically.  Depending on the cause, you may need to reload your UI (/rl).  If you find one of these and can reproduce the issue, let me know.
 * Minor: There may be an odd interaction with [SuperWoW](https://github.com/balakethelock/SuperWoW) and/or [Nampower](https://github.com/pepopo978/nampower) and randomly seeing "Unknown Unit" on the screen -- still trying to work out the root cause.  
 * Minor: Macros will light up on the action bars the same as non-macro buttons do however if you have conditionals or more than one spell you must put the plain spell anywhere on your actionbars.  This is also true for reactive abilities for basically the same reasons.
+* Minor: HealComm support.  See [below](#healcomm-support)
 * I have not tested all possible combinations of conditionals or ways to break things.  Find me on Discord or open an issue if you find any bugs or have feedback.
 
 ---
@@ -250,7 +251,7 @@ Both [SuperWoW](https://github.com/balakethelock/SuperWoW) and [Nampower](https:
 | mypowerlost    | [mypowerlost:>=X]<br/>[mypowerlost:>=X/<=Y] | * |  | The player's lost power (mana/rage/energy) compared to X. |
 | myrawhp        | [myrawhp:>=X]<br/>[myrawhp:>=X/<=Y] | * |  | The player's health compared to X. |
 | myrawpower     | [myrawpower:>=X]<br/>[myrawpower:>=X/<=Y] | * |  | The player's power (mana/rage/energy) compared to X. |
-| reactive       | [reactive]<br/>[reactive:Overpower] | * |  | If the player has the reactive ability (Revenge, Overpower, Riposte, etc.) available to use.<br/><br/>**NOTE: Currently requires the reactive ability to be somewhere on your actionbars in addition to any macros you're using it in.  A planned future update will remove this requirement if using Nampower.** |
+| reactive       | [reactive]<br/>[reactive:Overpower] | * |  | If the player has the reactive ability (Revenge, Overpower, Riposte, etc.) available to use.<br/><br/>**NOTE: Currently requires the reactive ability to be somewhere on your actionbars in addition to any macros you're using it in.  A planned future update will remove this requirement if using [Nampower](https://github.com/pepopo978/nampower).** |
 | resting        | [resting] |  | * | If the player is resting (in an inn/capital city/etc.) |
 | stance         | [stance:0/1/2/3/4/5] | * |  | If the player is in stance #.<br/>Supports Shadowform and Stealth as stance 1.|
 | stealth        | [stealth] |  | * | If the player is in Stealth or Prowl. |
@@ -366,7 +367,25 @@ Compatibility should be the same as the original CleverMacro and Roid-Macros how
 * ShaguTweaks
 
 
+### HealComm Support
+This addon uses [SuperWoW](https://github.com/balakethelock/SuperWoW)'s CastSpellByName which is not compatible with the standard HealComm-1.0 library.  MarcelineVQ has an updated version of [LunaUnitFrames](https://github.com/MarcelineVQ/LunaUnitFrames) where they added [SuperWoW](https://github.com/balakethelock/SuperWoW) support to the HealComm-1.0 library.  If you use [SuperWoW](https://github.com/balakethelock/SuperWoW) and want proper HealComm support with your macros, you need to do one or both of the following:  
 
+* Contact the author of whichever addon and ask that they update their HealComm to support [SuperWoW](https://github.com/balakethelock/SuperWoW) and link them to MarcelineVQ's updated [LunaUnitFrames](https://github.com/MarcelineVQ/LunaUnitFrames).
+
+* Manually update any addon that is using the `HealComm-1.0` library by deleting the `HealComm-1.0` folder and replacing it with the `libs/HealComm-1.0` folder from MarcelineVQ's version of LunaUnitFrames.  
+
+Example for the standalone HealComm addon:  
+1. Exit WoW completely.
+2. Download a copy of the updated [LunaUnitFrames](https://github.com/MarcelineVQ/LunaUnitFrames).
+3. Delete the `/Interface/AddOns/HealComm/libs/HealComm-1.0` folder.
+4. From the [LunaUnitFrames](https://github.com/MarcelineVQ/LunaUnitFrames) download, copy the `/libs/HealComm-1.0` folder into your `/Interface/AddOns/HealComm/libs/` folder.
+
+
+----
+### Original Addons & Authors  
+* [Roid-Macros by DennisWG (DWG)](https://github.com/DennisWG/Roid-Macros)  
+* [Roid-Macros by MarcelineVQ](https://github.com/MarcelineVQ/Roid-Macros)  
+* [CleverMacro by DanielAdolfsson (_brain)](https://github.com/DanielAdolfsson/CleverMacro)
 ----
 License
 ----
