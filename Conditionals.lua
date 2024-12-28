@@ -42,15 +42,12 @@ end
 -- remarks: Will always return true if help is not given
 -- returns: Whether or not the given target can either be attacked or supported, depending on help
 function CleveRoids.CheckHelp(target, help)
+    if help == nil then return true end
     if help then
-        if help then
-            return UnitCanAssist("player", target)
-        else
-            return UnitCanAttack("player", target)
-        end
+        return UnitCanAssist("player", target)
+    else
+        return UnitCanAttack("player", target)
     end
-
-	return true
 end
 
 -- Ensures the validity of the given target
