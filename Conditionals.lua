@@ -515,13 +515,13 @@ function CleveRoids.IsReactiveUsable(spellName)
     if not CleveRoids.reactiveSlots[spellName] then return false end
     local actionSlot = CleveRoids.reactiveSlots[spellName]
 
-    local isUsable = IsUsableAction(actionSlot)
+    local isUsable, oom = IsUsableAction(actionSlot)
     local start, duration = GetActionCooldown(actionSlot)
 
     if isUsable and (start == 0 or duration == 1.5) then -- 1.5 just means gcd is active
-        return true
+        return 1
     else
-        return false
+        return nil, oom
     end
 end
 
@@ -762,7 +762,7 @@ CleveRoids.Keywords = {
 
     nomydebuff = function(conditionals)
         return And(conditionals.nomydebuff, function(v)
-            return not CleveRoids.ValidatePlayerBuff(v)
+            return not CleveRoids.ValidatePlayerDebuff(v)
         end)
     end,
 
