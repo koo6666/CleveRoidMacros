@@ -28,7 +28,6 @@ end
 
 function CleveRoids.TestForActiveAction(actions)
     if not actions then return end
-
     local hasActive = false
     if actions.tooltip and table.getn(actions.list) == 0 then
         CleveRoids.TestAction(actions.cmd, actions.args)
@@ -177,6 +176,10 @@ function CleveRoids.ExecuteMacroBody(body,inline)
     if inline then lines = CleveRoids.splitString(body, "\\n"); end
 
     for k,v in pairs(lines) do
+        if CleveRoids.stopmacro then
+            CleveRoids.stopmacro = false
+            return true
+        end
         ChatFrameEditBox:SetText(v)
         ChatEdit_SendText(ChatFrameEditBox)
     end
@@ -705,6 +708,11 @@ function CleveRoids.DoWithConditionals(msg, hook, fixEmptyTargetFunc, targetBefo
         end
     end
 
+    if action == "STOPMACRO" then
+        CleveRoids.stopmacro = true
+        return true
+    end
+
     local result = true
     if string.sub(msg, 1, 1) == "{" and string.sub(msg, -1) == "}" then
         if string.sub(msg, 2, 2) == "\"" and string.sub(msg, -2,-2) == "\"" then
@@ -918,6 +926,18 @@ function CleveRoids.DoRetarget()
         ClearTarget()
         TargetNearestEnemy()
     end
+end
+
+-- Attempts to stop macro
+function CleveRoids.DoStopMacro(msg)
+    local handled = false
+    for k, v in pairs(CleveRoids.splitStringIgnoringQuotes(CleveRoids.Trim(msg))) do
+        if CleveRoids.DoWithConditionals(msg, nil, nil, not CleveRoids.hasSuperwow, "STOPMACRO") then
+            handled = true -- we parsed at least one command
+            break
+        end
+    end
+    return handled
 end
 
 function CleveRoids.DoCastSequence(sequence)
@@ -1209,6 +1229,10 @@ function CleveRoids.Frame:ADDON_LOADED(addon)
         CleveRoids.Hooks.RunLine = RunLine
         CleveRoids.RunLine = function(...)
             for i = 1, arg.n do
+                if CleveRoids.stopmacro then
+                    CleveRoids.stopmacro = false
+                    return true
+                end
                 local intercepted = false
                 local text = arg[i]
 
